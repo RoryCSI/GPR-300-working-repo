@@ -344,12 +344,65 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	//	consistent for all programs
 
 
+	//TUTORIAL SHADERS
+	//compile shaders
+	GLuint program;
+
+	static const char* vertex_shader_source[] =
+	{
+		"#version 420 core                                                 \n"
+		"                                                                  \n"
+		"void main(void)                                                   \n"
+		"{                                                                 \n"
+		"    const vec4 vertices[] = vec4[](vec4( 0.25, -0.25, 0.5, 1.0),  \n"
+		"                                   vec4( 0.0, 0.25, 0.5, 1.0),    \n"
+		"                                   vec4( -0.25, -0.25, 0.5, 1.0));\n"
+		"                                                                  \n"
+		"    gl_Position = vertices[gl_VertexID];                          \n"
+		"}                                                                 \n"
+	};
+
+	static const char* fragment_shader_source[] =
+	{
+		"#version 420 core                                                 \n"
+		"                                                                  \n"
+		"out vec4 color;                                                   \n"
+		"                                                                  \n"
+		"void main(void)                                                   \n"
+		"{                                                                 \n"
+		"    color = vec4(0.0, 0.8, 1.0, 1.0);                             \n"
+		"}                                                                 \n"
+	};
+
+	program = glCreateProgram();
+
+	GLuint vertex_shader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertex_shader, 1, vertex_shader_source, NULL);
+	glCompileShader(vertex_shader);
+
+	GLuint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragment_shader, 1, fragment_shader_source, NULL);
+	glCompileShader(fragment_shader);
+
+	glAttachShader(program, vertex_shader);
+	glAttachShader(program, fragment_shader);
+
+	glLinkProgram(program);
+
+	demoState->rendering_program = program;
+
+	glDeleteShader(vertex_shader);
+	glDeleteShader(fragment_shader);
+
 	printf("\n\n---------------- LOAD SHADERS FINISHED ---------------- \n");
 
 	//done
 
-	// ****TO-DO: 
+	// Done: 
 	//	-> implement "startup" from tutorial
+	//demoState->rendering_program = program;
+	glGenVertexArrays(1, &demoState->vertex_array_object);
+	glBindVertexArray(demoState->vertex_array_object);
 
 }
 

@@ -41,7 +41,7 @@
 //-----------------------------------------------------------------------------
 // other demo includes
 
-
+#include <GL/glew.h>
 
 //-----------------------------------------------------------------------------
 
@@ -184,8 +184,10 @@ struct a3_DemoState
 	//-------------------------------------------------------------------------
 	// the end
 
-	// ****TO-DO: 
+	// Done: 
 	//	-> add data members, the graphics handles from tutorial
+	GLuint rendering_program;
+	GLuint vertex_array_object;
 
 };
 
