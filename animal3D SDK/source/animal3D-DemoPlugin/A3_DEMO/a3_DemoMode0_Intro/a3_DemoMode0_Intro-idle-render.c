@@ -233,7 +233,7 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 	if (demoState->updateAnimation)
 		a3shaderUniformSendDouble(a3unif_single, currentDemoProgram->uTime, 1, &demoState->timer_display->totalTime);
 
-	// ****TO-DO: 
+	// ****WIP: 
 	//	-> send lighting uniforms and bind blocks where appropriate
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightColor, 1, demoMode->pointLightData->color.v);
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uLightPosition, 1, demoMode->pointLightData->worldPos.v);
@@ -262,20 +262,20 @@ void a3intro_render(a3_DemoState const* demoState, a3_DemoMode0_Intro const* dem
 			// send lights and matrices, fall through to texturing
 			modelViewMat = currentSceneObject->modelMatrixStackPtr->modelViewMat;
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV, 1, modelViewMat.mm);
-			// ****TO-DO: 
+			// ****Done: 
 			//	-> send "normal matrix": the inverse-transpose of the model-view matrix
 			//		(hint: the correct uniform location is in the shader header)
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMV_nrm, 1, currentSceneObject->modelMatrixStackPtr->modelViewMatInverseTranspose.mm);
 
 		case intro_renderModeTexture:
 			// activate diffuse map, fall through to solid color
-			// ****TO-DO: 
+			// ****Done: 
 			//	-> activate diffuse texture on texture unit 0
 			a3textureActivate(texture_dm[j], a3tex_unit00);
 
 		case intro_renderModeSolid:
 			// send general matrix and color, end
-			// ****TO-DO: 
+			// ****Done: 
 			//	-> send model-view-projection matrix
 			modelViewProjectionMat = currentSceneObject->modelMatrixStackPtr->modelViewProjectionMat;
 			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, modelViewProjectionMat.mm);

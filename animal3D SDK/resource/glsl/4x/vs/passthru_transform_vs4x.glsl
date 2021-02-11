@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****Done: 
 //	-> declare model-view-projection matrix uniform
 //		(hint: correct name is used in codebase)
 //	-> transform input position by MVP matrix, store as output
@@ -37,7 +37,7 @@ flat out int vInstanceID;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
+	// output transformed position;
 	gl_Position = uMVP * aPosition;
 
 	vVertexID = gl_VertexID;

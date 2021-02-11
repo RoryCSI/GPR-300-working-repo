@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****Done: 
 //	-> declare matrices
 //		(hint: not MVP this time, made up of multiple; see render code)
 //	-> transform input position correctly, assign to output
@@ -44,17 +44,12 @@ uniform mat4 uMV;
 uniform mat4 uMV_nrm;
 uniform mat4 uP;
 
-uniform vec4 uLightPosition;
-uniform vec4 uLightColor;
-uniform float uLightRadius;
-
 out vec4 vNormal;
 out vec4 vPosition;
 out vec2 vTexcoord;
 
-out vec4 vLightPosition;
-out vec4 vLightColor;
-out float vLightRadius;
+flat out int vVertexID;
+flat out int vInstanceID;
 
 //out vbVertexData {
 //	vec3 normal;
@@ -62,20 +57,14 @@ out float vLightRadius;
 //	vec3 bitangent;
 //} vb_vertex_data;
 
-flat out int vVertexID;
-flat out int vInstanceID;
-
-
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	vPosition = uMV * aPosition;
+	vPosition = uMV * aPosition; //camera space
 
 	vNormal = uMV_nrm * vec4(aNormal, 0.0);
-
 	vTexcoord = aTexcoord;
 
-	gl_Position = uP * vPosition;
+	gl_Position = uP * vPosition; //screen space
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;

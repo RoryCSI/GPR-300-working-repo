@@ -547,7 +547,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTangentBasis_gs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
-	// ****TO-DO: 
+	// ****Done: 
 	//	-> set up missing shader programs, using hints above: 
 	//		-> texturing, Lambert and Phong
 	// 00-common programs: 

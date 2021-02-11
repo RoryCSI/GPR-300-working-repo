@@ -43,15 +43,17 @@ uniform sampler2D uSampler;
 
 void main()
 {
+	//Lambert
 	vec4 N = normalize(vNormal);
 	vec4 L = normalize(uLightPosition[0] - vPosition);
 	float kd = dot(N, L);
 	kd = max(kd, 0.0);
 
-	vec4 R = reflect(-L, N);      // Reflected light vector
-    vec4 V = normalize(-vPosition);
-	float specAngle = max(dot(R, V), 0.0);
-    float specular = pow(specAngle, 1);
+	//A wildly innacurate abridgement of Phong
+	vec4 reflectVector = reflect(-L, N);
+    vec4 lookVector = normalize(uLightPosition[0]-vPosition);
+	float Angle = max(dot(reflectVector, lookVector), 0.0);
+    float specular = pow(Angle, 1);
 
 	rtFragColor = kd * uLightColor[0] * specular * texture2D(uSampler, vTexcoord) * uColor;
 }
