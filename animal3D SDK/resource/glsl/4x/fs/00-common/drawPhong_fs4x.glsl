@@ -21,7 +21,7 @@
 	drawPhong_fs4x.glsl
 	Output Phong shading.
 */
-
+///////////////  Edited by Rory Beebout   ////////////////
 #version 450
 
 // ****Done: 
@@ -43,7 +43,7 @@ uniform sampler2D uSampler;
 
 void main()
 {
-	//Lambert
+	//Lambert again
 	vec4 N = normalize(vNormal);
 	vec4 L = normalize(uLightPosition[0] - vPosition);
 	float kd = dot(N, L);

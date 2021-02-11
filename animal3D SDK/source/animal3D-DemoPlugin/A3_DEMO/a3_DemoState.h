@@ -25,7 +25,7 @@
 	*** THIS IS YOUR DEMO'S MAIN HEADER FILE ***
 	********************************************
 */
-
+///////////////  Edited by Rory Beebout   ////////////////
 #ifndef __ANIMAL3D_DEMOSTATE_H
 #define __ANIMAL3D_DEMOSTATE_H
 

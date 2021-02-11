@@ -21,6 +21,7 @@
 	drawTexture_fs4x.glsl
 	Output texture blended with color.
 */
+///////////////  Edited by Rory Beebout   ////////////////
 
 #version 450
 
@@ -33,7 +34,7 @@
 in vec2 vTexcoord;
 
 
-/*layout (location = ?)*/ uniform sampler2D uSampler;
+uniform sampler2D uSampler;
 
 //For coloring Texture
 uniform vec4 uColor;

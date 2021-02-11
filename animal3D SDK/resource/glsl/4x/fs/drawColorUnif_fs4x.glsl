@@ -21,7 +21,7 @@
 	drawColorUnif_fs4x.glsl
 	Draw uniform solid color.
 */
-
+///////////////  Edited by Rory Beebout   ////////////////
 #version 450
 
 // ****Done: 
@@ -35,6 +35,6 @@ layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE RED
+	// Output is color of uColor;
 	rtFragColor = uColor;
 }

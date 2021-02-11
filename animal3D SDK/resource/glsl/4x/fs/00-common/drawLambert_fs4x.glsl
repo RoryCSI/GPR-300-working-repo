@@ -21,7 +21,7 @@
 	drawLambert_fs4x.glsl
 	Output Lambertian shading.
 */
-
+///////////////  Edited by Rory Beebout   ////////////////
 #version 450
 
 // ****TO-DO: 

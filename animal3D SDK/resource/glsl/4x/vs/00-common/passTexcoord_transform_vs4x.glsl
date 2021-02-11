@@ -21,7 +21,7 @@
 	passTexcoord_transform_vs4x.glsl
 	Calculate final position and pass atlas texture coordinate.
 */
-
+///////////////  Edited by Rory Beebout   ////////////////
 #version 450
 
 // ****Done: 
@@ -43,7 +43,7 @@ flat out int vInstanceID;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
+	// MV and uP position to screen space
 	gl_Position = uMVP * aPosition;
 
 	vTexcoord = aTexcoord;
