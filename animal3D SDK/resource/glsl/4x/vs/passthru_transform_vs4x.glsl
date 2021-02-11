@@ -29,6 +29,7 @@
 //		(hint: correct name is used in codebase)
 //	-> transform input position by MVP matrix, store as output
 
+
 layout (location = 0) in vec4 aPosition;
 
 flat out int vVertexID;
