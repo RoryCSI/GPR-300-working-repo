@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****Done: 
 //	-> start with list from "drawLambert_fs4x"
 //		(hint: can put common stuff in "utilCommon_fs4x" to avoid redundancy)
 //	-> calculate view vector, reflection vector and Phong coefficient
@@ -32,8 +32,26 @@
 
 layout (location = 0) out vec4 rtFragColor;
 
+in vec4 vPosition;
+in vec4 vNormal;
+in vec2 vTexcoord;
+uniform vec4 uLightPosition[];
+uniform vec4 uLightColor[];
+uniform float uLightRadius[];
+uniform vec4 uColor;
+uniform sampler2D uSampler;
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
+	vec4 N = normalize(vNormal);
+	vec4 L = normalize(uLightPosition[0] - vPosition);
+	float kd = dot(N, L);
+	kd = max(kd, 0.0);
+
+	vec4 R = reflect(-L, N);      // Reflected light vector
+    vec4 V = normalize(-vPosition);
+	float specAngle = max(dot(R, V), 0.0);
+    float specular = pow(specAngle, 1);
+
+	rtFragColor = kd * uLightColor[0] * specular * texture2D(uSampler, vTexcoord) * uColor;
 }
