@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	a3_DemoState_loading.c/.cpp
 	Demo state function implementations.
@@ -836,8 +838,8 @@ void a3demo_loadTextures(a3_DemoState* demoState)
 void a3demo_loadFramebuffers(a3_DemoState* demoState)
 {
 	// create framebuffers and change their texture settings if need be
-	//a3_Framebuffer* fbo;
-	//a3ui32 i, j;
+	a3_Framebuffer* fbo;
+	a3ui32 i, j;
 
 	// frame sizes
 	const a3ui16 frameWidth1 = demoState->frameWidth, frameHeight1 = demoState->frameHeight;
@@ -869,10 +871,31 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	a3framebufferCreate(fbo, "fbo:c16x4;d24s8",
 		4, a3fbo_colorRGBA16, a3fbo_depth24_stencil8,
 		frameWidth1, frameHeight1);
+	fbo = demoState->fbo_c32f;
+	a3framebufferCreate(fbo, "fbo:c32f",
+		0, a3fbo_colorDisable, a3fbo_depth32,
+		frameWidth1, frameHeight1);
 	fbo = demoState->fbo_d32;
 	a3framebufferCreate(fbo, "fbo:d32",
-		0, a3fbo_colorDisable, a3fbo_depth32,
+		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
 		shadowMapSize, shadowMapSize);
+	fbo = demoState->fbo_c16x4;
+	a3framebufferCreate(fbo, "fbo:c16x4f",
+		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		frameWidth1, frameHeight1);
+	fbo = demoState->fbo_c16_szHalf;
+	a3framebufferCreate(fbo, "fbo:c16x4f",
+		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		frameWidth1, frameHeight1);
+	fbo = demoState->fbo_c16_szQuarter;
+	a3framebufferCreate(fbo, "fbo:c16x4f",
+		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		frameWidth1, frameHeight1);
+	fbo = demoState->fbo_c16_szEighth;
+	a3framebufferCreate(fbo, "fbo:c16x4f",
+		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		frameWidth1, frameHeight1);
+	
 	//...
 
 

@@ -18,6 +18,8 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
+	///////Modified by Rory Beebout///////
+
 	a3_DemoMode1_PostProc-idle-update.c
 	Demo mode implementations: animation scene.
 
@@ -41,13 +43,17 @@
 
 void a3postproc_update_graphics(a3_DemoState* demoState, a3_DemoMode1_PostProc* demoMode)
 {
-	// ****TO-DO:
+	// ****Done:
 	//	-> uncomment uniform data upload
 	//	-> upload model and light data to respective uniform buffers
 	//		(hint: projectors and models are together)
-/*	// upload
-	a3bufferRefillOffset(demoState->ubo_transform, 0, 0, sizeof(demoMode->projectorMatrixStack), demoMode->projectorMatrixStack);
-	//...*/
+	// upload
+	a3bufferRefillOffset(demoState->ubo_transform, 0, 0,
+		sizeof(demoMode->projectorMatrixStack), demoMode->projectorMatrixStack);
+	a3bufferRefillOffset(demoState->ubo_transform, 0, sizeof(demoMode->projectorMatrixStack),
+		sizeof(demoMode->modelMatrixStack), demoMode->modelMatrixStack);
+	a3bufferRefillOffset(demoState->ubo_transform, 0, 0,
+		sizeof(demoMode->pointLightData), demoMode->pointLightData);
 }
 
 void a3postproc_update_scene(a3_DemoState* demoState, a3_DemoMode1_PostProc* demoMode, a3f64 const dt)
