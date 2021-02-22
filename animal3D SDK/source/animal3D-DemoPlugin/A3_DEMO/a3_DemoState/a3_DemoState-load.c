@@ -857,7 +857,7 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 	const a3ui32 targets_composite = 1;
 
 
-	// ****TO-DO:
+	// ****Done:
 	//	-> uncomment framebuffer initialization
 	//	-> initialize all framebuffers
 	//		(hint: their names describe their features)
@@ -873,27 +873,27 @@ void a3demo_loadFramebuffers(a3_DemoState* demoState)
 		frameWidth1, frameHeight1);
 	fbo = demoState->fbo_c32f;
 	a3framebufferCreate(fbo, "fbo:c32f",
-		0, a3fbo_colorDisable, a3fbo_depth32,
+		1, a3fbo_colorDisable, a3fbo_depth32,
 		frameWidth1, frameHeight1);
 	fbo = demoState->fbo_d32;
 	a3framebufferCreate(fbo, "fbo:d32",
-		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		1, a3fbo_colorRGBA16, a3fbo_depthDisable,
 		shadowMapSize, shadowMapSize);
 	fbo = demoState->fbo_c16x4;
 	a3framebufferCreate(fbo, "fbo:c16x4f",
-		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+		4, a3fbo_colorRGBA16, a3fbo_depthDisable,
 		frameWidth1, frameHeight1);
 	fbo = demoState->fbo_c16_szHalf;
-	a3framebufferCreate(fbo, "fbo:c16x4f",
-		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+	a3framebufferCreate(fbo, "fbo:c16;szHalf",
+		4, a3fbo_colorRGBA16, a3fbo_depthDisable,
 		frameWidth1, frameHeight1);
 	fbo = demoState->fbo_c16_szQuarter;
-	a3framebufferCreate(fbo, "fbo:c16x4f",
-		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+	a3framebufferCreate(fbo, "fbo:c16;szQuarter",
+		4, a3fbo_colorRGBA16, a3fbo_depthDisable,
 		frameWidth1, frameHeight1);
 	fbo = demoState->fbo_c16_szEighth;
-	a3framebufferCreate(fbo, "fbo:c16x4f",
-		0, a3fbo_colorRGBA16, a3fbo_depthDisable,
+	a3framebufferCreate(fbo, "fbo:c16;szEighth",
+		4, a3fbo_colorRGBA16, a3fbo_depthDisable,
 		frameWidth1, frameHeight1);
 	
 	//...

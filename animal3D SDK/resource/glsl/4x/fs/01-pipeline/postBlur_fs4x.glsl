@@ -18,6 +18,8 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
+	///////Modified by Rory Beebout///////
+
 	postBlur_fs4x.glsl
 	Gaussian blur.
 */
@@ -30,10 +32,17 @@
 //	-> declare Gaussian blur function that samples along one axis
 //		(hint: the efficiency of this is described in class)
 
+
+in vec2 vTexcoord;
+uniform sampler2D uTex_dm;
+uniform vec2 uAxis;
+
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
-	rtFragColor = vec4(0.0, 1.0, 0.5, 1.0);
+	//rtFragColor = vec4(0.0, 1.0, 0.5, 1.0);
+
+	rtFragColor = texture(uTex_dm, vTexcoord);
 }
