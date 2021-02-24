@@ -34,11 +34,41 @@
 //	-> perform "shadow test" (explained in class)
 
 layout (location = 0) out vec4 rtFragColor;
+layout (binding = 0) uniform sampler2D uTex_shadow;
 
 uniform int uCount;
 
+in vec4 vView;
+in vec4 vNormal;
+in vec4 vPosition;
+in vec2 vTexcoord;
+in vec4 vShadowCoord;
+
+in vec4 vLightPos;
+in vec4 vLightColor;
+in float vLightRadius;
+
+uniform vec4 uColor;
+uniform sampler2D uSampler;
+
+struct sPointLightData
+{
+	vec4 position;						// position in rendering target space
+	vec4 worldPos;						// original position in world space
+	vec4 color;							// RGB color with padding
+	float radius;						// radius (distance of effect from center)
+	float radiusSq;						// radius squared (if needed)
+	float radiusInv;					// radius inverse (attenuation factor)
+	float radiusInvSq;					// radius inverse squared (attenuation factor)
+};
+
+uniform ubLight
+{
+	sPointLightData uPointLightData[4];
+};
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	vec4 phongOutput = vec4(1,1,1,1);
+	rtFragColor = textureProj(uTex_shadow, vShadowCoord) * phongOutput;
 }

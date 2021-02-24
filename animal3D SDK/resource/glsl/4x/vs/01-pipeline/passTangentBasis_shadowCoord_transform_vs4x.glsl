@@ -18,6 +18,8 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
+	///////Modified by Rory Beebout///////
+	
 	passTangentBasis_shadowCoord_transform_vs4x.glsl
 	Calculate and pass tangent basis, and shadow coordinate.
 */
@@ -43,16 +45,86 @@
 //	-> declare and write varying for shadow coordinate
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 8) in vec2 aTexcoord;
 
 flat out int vVertexID;
 flat out int vInstanceID;
 
 uniform int uIndex;
+uniform int uCount;
+
+out vec4 vView;
+out vec4 vNormal;
+out vec4 vPosition;
+out vec2 vTexcoord;
+out vec4 vShadowCoord;
+
+out vec4 vLightPos;
+out vec4 vLightColor;
+out float vLightRadius;
+
+struct sProjectorMatrixStack
+{
+	mat4 projectionMat;					// projection matrix (viewer -> clip)
+	mat4 projectionMatInverse;			// projection inverse matrix (clip -> viewer)
+	mat4 projectionBiasMat;				// projection-bias matrix (viewer -> biased clip)
+	mat4 projectionBiasMatInverse;		// projection-bias inverse matrix (biased clip -> viewer)
+	mat4 viewProjectionMat;				// view-projection matrix (world -> clip)
+	mat4 viewProjectionMatInverse;		// view-projection inverse matrix (clip -> world)
+	mat4 viewProjectionBiasMat;			// view projection-bias matrix (world -> biased clip)
+	mat4 viewProjectionBiasMatInverse;	// view-projection-bias inverse matrix (biased clip -> world)
+};
+
+struct sModelMatrixStack
+{
+	mat4 modelMat;						// model matrix (object -> world)
+	mat4 modelMatInverse;				// model inverse matrix (world -> object)
+	mat4 modelMatInverseTranspose;		// model inverse-transpose matrix (object -> world skewed)
+	mat4 modelViewMat;					// model-view matrix (object -> viewer)
+	mat4 modelViewMatInverse;			// model-view inverse matrix (viewer -> object)
+	mat4 modelViewMatInverseTranspose;	// model-view inverse transpose matrix (object -> viewer skewed)
+	mat4 modelViewProjectionMat;		// model-view-projection matrix (object -> clip)
+	mat4 atlasMat;						// atlas matrix (texture -> cell)
+};
+
+uniform ubTransformStack
+{
+	sProjectorMatrixStack uCameraMatrixStack, uLightMatrixStack;
+	sModelMatrixStack uModelMatrixStack[16];
+};
+
+struct sPointLightData
+{
+	vec4 position;						// position in rendering target space
+	vec4 worldPos;						// original position in world space
+	vec4 color;							// RGB color with padding
+	float radius;						// radius (distance of effect from center)
+	float radiusSq;						// radius squared (if needed)
+	float radiusInv;					// radius inverse (attenuation factor)
+	float radiusInvSq;					// radius inverse squared (attenuation factor)
+};
+
+uniform ubLight
+{
+	sPointLightData uPointLightData[4];
+};
+
+// 2) shadow mapping
+//	-> using the above setup, perform additional transformation to generate a 
+//		"shadow coordinate", which is a "biased clip-space" coordinate from 
+//		the light's point of view
+//		(hint: transformation sequence is model-view-projection-bias)
+//	-> declare and write varying for shadow coordinate
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	gl_Position = uCameraMatrixStack.projectionMat * uModelMatrixStack[uIndex].modelViewMat * aPosition;
+
+	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
+	vTexcoord = aTexcoord;
+
+	mat4 shadowMatrix = uLightMatrixStack.viewProjectionBiasMat * uModelMatrixStack[uIndex].modelMat; //Blue Book p. 652
+	vShadowCoord = shadowMatrix * aPosition;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
