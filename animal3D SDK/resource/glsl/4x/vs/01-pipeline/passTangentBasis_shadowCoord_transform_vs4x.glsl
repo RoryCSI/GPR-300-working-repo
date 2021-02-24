@@ -26,7 +26,7 @@
 
 #version 450
 
-// ****TO-DO:
+// ****Done:
 // 1) core transformation and lighting setup:
 //	-> declare data structures for projector and model matrix stacks
 //		(hint: copy and slightly modify demo object descriptors)
@@ -45,6 +45,7 @@
 //	-> declare and write varying for shadow coordinate
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 2) in vec3 aNormal;
 layout (location = 8) in vec2 aTexcoord;
 
 flat out int vVertexID;
@@ -90,7 +91,7 @@ struct sModelMatrixStack
 uniform ubTransformStack
 {
 	sProjectorMatrixStack uCameraMatrixStack, uLightMatrixStack;
-	sModelMatrixStack uModelMatrixStack[16];
+	sModelMatrixStack uModelMatrixStack[16]; //16 Max model count
 };
 
 struct sPointLightData
@@ -106,7 +107,7 @@ struct sPointLightData
 
 uniform ubLight
 {
-	sPointLightData uPointLightData[4];
+	sPointLightData uPointLightData[4]; //4 Max light count
 };
 
 // 2) shadow mapping
@@ -119,11 +120,24 @@ uniform ubLight
 void main()
 {
 	gl_Position = uCameraMatrixStack.projectionMat * uModelMatrixStack[uIndex].modelViewMat * aPosition;
+	
+	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition; //view space coordinate - Blue Book p. 617
 
-	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
-	vTexcoord = aTexcoord;
+	vNormal = uModelMatrixStack[uIndex].modelViewMat * vec4(aNormal, 0.0); //normal in view space - Blue Book p. 617
 
-	mat4 shadowMatrix = uLightMatrixStack.viewProjectionBiasMat * uModelMatrixStack[uIndex].modelMat; //Blue Book p. 652
+	vView = -vPosition; //view vector - Blue Book p. 617
+
+	//loop to pass on the lights;
+	for(int i = 0; i < uCount; i++)
+	{
+		vLightPos = uPointLightData[uCount].position;
+		vLightColor = uPointLightData[uCount].color;
+		vLightRadius = uPointLightData[uCount].radiusSq;
+	}
+
+	vTexcoord = aTexcoord; //pass on texcoord
+	
+	mat4 shadowMatrix = uLightMatrixStack.viewProjectionBiasMat * uModelMatrixStack[uIndex].modelMat;//calculate shadowCoord in biased clip-space - Blue Book p. 652
 	vShadowCoord = shadowMatrix * aPosition;
 
 	vVertexID = gl_VertexID;

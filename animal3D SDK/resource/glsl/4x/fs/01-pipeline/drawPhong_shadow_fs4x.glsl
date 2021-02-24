@@ -69,6 +69,22 @@ uniform ubLight
 
 void main()
 {
-	vec4 phongOutput = vec4(1,1,1,1);
-	rtFragColor = textureProj(uTex_shadow, vShadowCoord) * phongOutput;
+	vec4 phongColor = vec4(0);//To store each light pass's results to later be combined
+
+	//normalize vectors
+	vec4 N = normalize(vNormal);
+	vec4 V = normalize(vView);
+
+	for(int i = 0; i < uCount; i++)
+	{
+		vec4 lightVector = uPointLightData[i].position - vPosition; //calculate view-space light vector - Blue Book p.617
+		vec4 L = normalize(lightVector); //Also needs to be normalized - Blue Book p.617
+		vec4 R = reflect(-L, N);//reflect -L off the normalized normal
+
+		vec4 diffuse = max(dot(N, L), 0.0) * texture2D(uSampler, vTexcoord) * uPointLightData[i].color; //Calculate diffuse by lightcolor, also throw in texture Blue Book p.617
+		vec4 specular = pow(max(dot(V, R), 0.0), 128.0) * uPointLightData[i].color; //calculate specular
+
+		phongColor += vec4(diffuse+specular);
+	}
+	rtFragColor = textureProj(uTex_shadow, vShadowCoord) * phongColor;
 }
