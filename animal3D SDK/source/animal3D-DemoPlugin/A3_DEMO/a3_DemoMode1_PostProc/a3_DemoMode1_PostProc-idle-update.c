@@ -52,7 +52,7 @@ void a3postproc_update_graphics(a3_DemoState* demoState, a3_DemoMode1_PostProc* 
 		sizeof(demoMode->projectorMatrixStack), demoMode->projectorMatrixStack);
 	a3bufferRefillOffset(demoState->ubo_transform, 0, sizeof(demoMode->projectorMatrixStack),
 		sizeof(demoMode->modelMatrixStack), demoMode->modelMatrixStack);
-	a3bufferRefillOffset(demoState->ubo_transform, 0, 0,
+	a3bufferRefillOffset(demoState->ubo_light, 0, 0,
 		sizeof(demoMode->pointLightData), demoMode->pointLightData);
 }
 

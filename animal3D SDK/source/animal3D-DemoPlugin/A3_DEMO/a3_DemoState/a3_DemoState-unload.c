@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	a3_DemoState_unloading.c/.cpp
 	Demo state function implementations.
