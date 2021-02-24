@@ -32,10 +32,18 @@
 //	-> declare Gaussian blur function that samples along one axis
 //		(hint: the efficiency of this is described in class)
 
+layout (binding = 0) uniform sampler2D uTex_dm;
+//layout (binding = 0) uniform sampler2D hdr_image;
+//layout (binding = 1) uniform sampler2D bloom_image;
+
 
 in vec2 vTexcoord;
-uniform sampler2D uTex_dm;
+//uniform sampler2D uTex_dm;
 uniform vec2 uAxis;
+
+uniform float exposure = 0.9;
+uniform float bloom_factor = 1.0;
+uniform float scene_factor = 1.0;
 
 layout (location = 0) out vec4 rtFragColor;
 
@@ -44,5 +52,13 @@ void main()
 	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
 	//rtFragColor = vec4(0.0, 1.0, 0.5, 1.0);
 
-	rtFragColor = texture(uTex_dm, vTexcoord);
+	vec4 c = vec4(0.0);
+	c += texture2D(uTex_dm, vTexcoord);
+	c += texture2D(uTex_dm, vTexcoord+uAxis);
+	c += texture2D(uTex_dm, vTexcoord-uAxis);
+	c = c/3.0;
+
+	rtFragColor = c;
+
+	//rtFragColor = (texture(uTex_dm, vTexcoord) + texture(uTex_dm, vTexcoord+uAxis)/2.0f);
 }
