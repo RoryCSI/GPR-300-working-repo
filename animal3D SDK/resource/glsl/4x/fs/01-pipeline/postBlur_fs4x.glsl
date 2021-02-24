@@ -41,24 +41,20 @@ in vec2 vTexcoord;
 //uniform sampler2D uTex_dm;
 uniform vec2 uAxis;
 
-uniform float exposure = 0.9;
-uniform float bloom_factor = 1.0;
-uniform float scene_factor = 1.0;
+uniform float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
 
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
-	//rtFragColor = vec4(0.0, 1.0, 0.5, 1.0);
 
 	vec4 c = vec4(0.0);
-	c += texture2D(hdr_image, vTexcoord);
-	c += texture2D(hdr_image, vTexcoord+uAxis);
-	c += texture2D(hdr_image, vTexcoord-uAxis);
-	c = c/3.0;
+	c = texture2D(hdr_image, vTexcoord) * weight[0];
+	for (int i = 1; i < 5; i++)
+	{
+		c += texture2D(hdr_image, vTexcoord + uAxis*i) * weight[i];
+		c += texture2D(hdr_image, vTexcoord - uAxis*i) * weight[i];
+	}
 
 	rtFragColor = c;
-
-	//rtFragColor = (texture(uTex_dm, vTexcoord) + texture(uTex_dm, vTexcoord+uAxis)/2.0f);
 }
