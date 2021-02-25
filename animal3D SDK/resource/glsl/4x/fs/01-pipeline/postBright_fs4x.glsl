@@ -44,8 +44,8 @@ void main()
 	rtFragColor = texture2D(uTex_dm, vTexcoord);
 
 	vec3 color = vec3(texture2D(uTex_dm, vTexcoord));
-	float y = dot(color, vec3(0.299, 0.587, 0.144)); //Calculate luminence - Blue Book p. 486
+	float y = dot(color, vec3(0.2126, 0.7152, 0.0722)); //Calculate luminence - Blue Book p. 486
 
-	color = color * 4.0 * smoothstep(0.8,1.2,y);//Apply brightness thresholds through smoothstep
-	brightColor = vec4(color,1.0);
+	color = color * 4.0 * smoothstep(0.5,1.1,y);//Apply brightness thresholds through smoothstep
+	rtFragColor = vec4(color,1.0);
 }

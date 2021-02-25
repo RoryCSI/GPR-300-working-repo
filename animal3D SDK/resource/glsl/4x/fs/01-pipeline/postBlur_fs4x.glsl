@@ -32,13 +32,13 @@
 //	-> declare Gaussian blur function that samples along one axis
 //		(hint: the efficiency of this is described in class)
 
-//layout (binding = 0) uniform sampler2D uTex_dm;
-layout (binding = 0) uniform sampler2D hdr_image;
+layout (binding = 0) uniform sampler2D uTex_dm;
+//layout (binding = 0) uniform sampler2D hdr_image;
 //layout (binding = 1) uniform sampler2D bloom_image;
 
 
 in vec2 vTexcoord;
-//uniform sampler2D uTex_dm;
+//uniform sampler2D uImage00;
 uniform vec2 uAxis;
 
 uniform float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
@@ -49,11 +49,11 @@ void main()
 {
 
 	vec4 c = vec4(0.0);
-	c = texture2D(hdr_image, vTexcoord) * weight[0];
+	c = texture2D(uTex_dm, vTexcoord) * weight[0];
 	for (int i = 1; i < 5; i++)
 	{
-		c += texture2D(hdr_image, vTexcoord + uAxis*i) * weight[i];
-		c += texture2D(hdr_image, vTexcoord - uAxis*i) * weight[i];
+		c += texture2D(uTex_dm, vTexcoord + uAxis*i) * weight[i];
+		c += texture2D(uTex_dm, vTexcoord - uAxis*i) * weight[i];
 	}
 
 	rtFragColor = c;
