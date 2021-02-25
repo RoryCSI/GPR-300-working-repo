@@ -29,13 +29,18 @@
 //	-> implement some sort of blending algorithm that highlights bright areas
 //		(hint: research some Photoshop blend modes)
 
-layout (binding = 0) uniform sampler2D uTex_dm;
+//layout (binding = 0) uniform sampler2D brightColor;
+
+//layout (binding = 0) uniform sampler2D uTex_dm;
+
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+uniform sampler2D uTex_nm;
+uniform sampler2D uTex_hm;
 
 //layout (binding = 0) uniform sampler2D hdr_image;
-layout (binding = 1) uniform sampler2D bloom_image;
-uniform float exposure = 0.9;
-uniform float bloom_factor = 1.0;
-uniform float scene_factor = 1.0;
+//layout (binding = 1) uniform sampler2D bloom_image;
+uniform float exposure = 1.5;
 
 
 in vec2 vTexcoord;
@@ -44,10 +49,13 @@ layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE PURPLE
-	vec4 c = vec4(0.0);
-	c += texelFetch(uTex_dm, ivec2(gl_FragCoord.xy), 0) * scene_factor;
-	c += texelFetch(bloom_image, ivec2(gl_FragCoord.xy)/2, 0) * bloom_factor;
-	c.rgb = vec3(1.0) - exp(-c.rgb * exposure);
-	rtFragColor = c;//texture2D(uTex_dm,vTexcoord);
+	vec3 hdr = texture(uTex_dm,vTexcoord).rgb;
+	vec3 bloom = texture(uTex_hm,vTexcoord).rgb;
+	vec3 bloom1 = texture(uTex_sm,vTexcoord).rgb;
+	vec3 bloom2 = texture(uTex_nm,vTexcoord).rgb;
+
+	hdr += bloom + bloom1 + bloom2;
+
+	vec3 result = vec3(1.0) - exp(-hdr * exposure);
+	rtFragColor = vec4(result,1.0);
 }
