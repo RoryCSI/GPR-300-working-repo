@@ -87,7 +87,7 @@ void main()
 
 	}
 
-	//Shadow test
+	//Shadow test - http://www.opengl-tutorial.org/intermediate-tutorials/tutorial-16-shadow-mapping/#basic-shadowmap
 	vec4 shadow = vec4(1.0); //Does nothing when out of shadow
 	if ( textureProj(uTex_shadow, vShadowCoord ).z  <  (vShadowCoord.z)/vShadowCoord.w ) //Perspective divide - compares depth from light and from shader to calc shadows
 	{

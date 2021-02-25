@@ -45,14 +45,14 @@ layout (location = 0) out vec4 rtFragColor;
 void main()
 {
 	//Sample each finished stage of (Bright, Blur H, Blur V)
-	vec3 hdr = texture(uTex_dm,vTexcoord).rgb;
+	vec3 original = texture(uTex_dm,vTexcoord).rgb;
 	vec3 bloom = texture(uTex_hm,vTexcoord).rgb;
 	vec3 bloom1 = texture(uTex_sm,vTexcoord).rgb;
 	vec3 bloom2 = texture(uTex_nm,vTexcoord).rgb;
 
 	//Simple additive;
-	hdr += bloom + bloom1 + bloom2;
+	original += bloom + bloom1 + bloom2;
 
-	vec3 result = vec3(1.0) - exp(-hdr * exposure); //Blue Book page 480
+	vec3 result = vec3(1.0) - exp(-original * exposure); //Blue Book page 480
 	rtFragColor = vec4(result,1.0);
 }
