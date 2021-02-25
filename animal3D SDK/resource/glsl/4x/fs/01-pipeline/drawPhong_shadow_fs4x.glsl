@@ -83,10 +83,21 @@ void main()
 		vec4 L = normalize(lightVector); //Also needs to be normalized - Blue Book p.617
 		vec4 R = reflect(-L, N);//reflect -L off the normalized normal
 
-		vec4 diffuse = max(dot(N, L), 0.0) * texture2D(uSampler, vTexcoord) * uPointLightData[i].color; //Calculate diffuse by lightcolor, also throw in texture Blue Book p.617
+		vec4 diffuse = max(dot(N, L), 0.0) * texture2D(uSampler, vTexcoord) *uPointLightData[i].color; //Calculate diffuse(lambert) by lightcolor, also throw in texture Blue Book p.617
 		vec4 specular = pow(max(dot(V, R), 0.0), 128.0) * uPointLightData[i].color; //calculate specular
+		float attenuation = smoothstep(uPointLightData[i].radius, 0, length(lightVector)); //Diminish lighting over distance
 
-		phongColor += vec4(diffuse+specular);
+		phongColor += vec4(attenuation*(diffuse+specular));
+
 	}
-	rtFragColor = textureProj(uTex_shadow, vShadowCoord) * phongColor;
+
+	//Shadow test
+	vec4 shadow = vec4(1.0); //Does nothing when out of shadow
+	if ( textureProj(uTex_shadow, vShadowCoord ).z  <  (vShadowCoord.z)/vShadowCoord.w ) //Perspective divide - compares depth from light and from shader to calc shadows
+	{
+		shadow = vec4(0.3); //Darken shadows
+	}
+
+	rtFragColor = shadow * phongColor; //Combine, output all above
 }
+
