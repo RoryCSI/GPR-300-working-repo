@@ -26,35 +26,33 @@
 
 #version 450
 
-// ****TO-DO:
+// ****Done:
 //	-> declare texture coordinate varying and input texture
 //	-> declare sampling axis uniform (see render code for clue)
 //	-> declare Gaussian blur function that samples along one axis
 //		(hint: the efficiency of this is described in class)
 
 layout (binding = 0) uniform sampler2D uTex_dm;
-//layout (binding = 0) uniform sampler2D hdr_image;
-//layout (binding = 1) uniform sampler2D bloom_image;
-
 
 in vec2 vTexcoord;
-//uniform sampler2D uImage00;
+
 uniform vec2 uAxis;
 
+//For Gaussian
 uniform float weight[5] = float[] (0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216);
 
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
-
-	vec4 c = vec4(0.0);
-	c = texture2D(uTex_dm, vTexcoord) * weight[0];
+	vec4 blurredColor = texture2D(uTex_dm, vTexcoord) * weight[0]; //Get the main fragment's color
+	
+	//Combine 5 neighbors' colors on one (uniform) axis using the weights
 	for (int i = 1; i < 5; i++)
 	{
-		c += texture2D(uTex_dm, vTexcoord + uAxis*i) * weight[i];
-		c += texture2D(uTex_dm, vTexcoord - uAxis*i) * weight[i];
+		blurredColor += texture2D(uTex_dm, vTexcoord + uAxis*i) * weight[i];
+		blurredColor += texture2D(uTex_dm, vTexcoord - uAxis*i) * weight[i];
 	}
 
-	rtFragColor = c;
+	rtFragColor = blurredColor; //output combined fragment
 }

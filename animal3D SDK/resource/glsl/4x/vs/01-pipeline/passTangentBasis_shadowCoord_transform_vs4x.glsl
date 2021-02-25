@@ -110,21 +110,12 @@ uniform ubLight
 	sPointLightData uPointLightData[4]; //4 Max light count
 };
 
-// 2) shadow mapping
-//	-> using the above setup, perform additional transformation to generate a 
-//		"shadow coordinate", which is a "biased clip-space" coordinate from 
-//		the light's point of view
-//		(hint: transformation sequence is model-view-projection-bias)
-//	-> declare and write varying for shadow coordinate
-
 void main()
 {
 	gl_Position = uCameraMatrixStack.projectionMat * uModelMatrixStack[uIndex].modelViewMat * aPosition;
 	
 	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition; //view space coordinate - Blue Book p. 617
-
 	vNormal = uModelMatrixStack[uIndex].modelViewMat * vec4(aNormal, 0.0); //normal in view space - Blue Book p. 617
-
 	vView = -vPosition; //view vector - Blue Book p. 617
 
 	//loop to pass on the lights;
@@ -137,7 +128,8 @@ void main()
 
 	vTexcoord = aTexcoord; //pass on texcoord
 	
-	mat4 shadowMatrix = uLightMatrixStack.viewProjectionBiasMat * uModelMatrixStack[uIndex].modelMat;//calculate shadowCoord in biased clip-space - Blue Book p. 652
+	//calculate shadowCoord in biased clip-space - Blue Book p. 652
+	mat4 shadowMatrix = uLightMatrixStack.viewProjectionBiasMat * uModelMatrixStack[uIndex].modelMat;
 	vShadowCoord = shadowMatrix * aPosition;
 
 	vVertexID = gl_VertexID;

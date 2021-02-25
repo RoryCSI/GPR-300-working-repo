@@ -46,10 +46,6 @@ in vec4 vPosition;
 in vec2 vTexcoord;
 in vec4 vShadowCoord;
 
-in vec4 vLightPos;
-in vec4 vLightColor;
-in float vLightRadius;
-
 uniform vec4 uColor;
 uniform sampler2D uSampler;
 

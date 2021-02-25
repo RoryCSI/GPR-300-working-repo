@@ -26,25 +26,20 @@
 
 #version 450
 
-// ****TO-DO:
+// ****Done:
 //	-> declare texture coordinate varying and input texture
 //	-> implement relative luminance function
 //	-> implement simple "tone mapping" such that the brightest areas of the 
 //		image are emphasized, and the darker areas get darker
 
 layout (location = 0) out vec4 rtFragColor;
-layout (location = 1) out vec4 brightColor;
-
-//layout (binding = 0) uniform sampler2D uTex_dm;
 
 in vec2 vTexcoord;
 uniform sampler2D uTex_dm;
 void main()
 {
-	rtFragColor = texture2D(uTex_dm, vTexcoord);
-
 	vec3 color = vec3(texture2D(uTex_dm, vTexcoord));
-	float y = dot(color, vec3(0.2126, 0.7152, 0.0722)); //Calculate luminence - Blue Book p. 486
+	float y = dot(color, vec3(0.2126, 0.7152, 0.0722)); //Calculate luminance - Blue Book p. 486
 
 	color = color * 4.0 * smoothstep(0.6,1.0,y);//Apply brightness thresholds through smoothstep
 	rtFragColor = vec4(color,1.0);

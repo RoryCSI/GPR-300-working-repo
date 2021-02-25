@@ -18,30 +18,25 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
+	///////Modified by Rory Beebout///////
+
 	postBlend_fs4x.glsl
 	Blending layers, composition.
 */
 
 #version 450
 
-// ****TO-DO:
+// ****Done:
 //	-> declare texture coordinate varying and set of input textures
 //	-> implement some sort of blending algorithm that highlights bright areas
 //		(hint: research some Photoshop blend modes)
-
-//layout (binding = 0) uniform sampler2D brightColor;
-
-//layout (binding = 0) uniform sampler2D uTex_dm;
 
 uniform sampler2D uTex_dm;
 uniform sampler2D uTex_sm;
 uniform sampler2D uTex_nm;
 uniform sampler2D uTex_hm;
 
-//layout (binding = 0) uniform sampler2D hdr_image;
-//layout (binding = 1) uniform sampler2D bloom_image;
 uniform float exposure = 1.5;
-
 
 in vec2 vTexcoord;
 
@@ -49,13 +44,15 @@ layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
+	//Sample each finished stage of (Bright, Blur H, Blur V)
 	vec3 hdr = texture(uTex_dm,vTexcoord).rgb;
 	vec3 bloom = texture(uTex_hm,vTexcoord).rgb;
 	vec3 bloom1 = texture(uTex_sm,vTexcoord).rgb;
 	vec3 bloom2 = texture(uTex_nm,vTexcoord).rgb;
 
+	//Simple additive;
 	hdr += bloom + bloom1 + bloom2;
 
-	vec3 result = vec3(1.0) - exp(-hdr * exposure);
+	vec3 result = vec3(1.0) - exp(-hdr * exposure); //Blue Book page 480
 	rtFragColor = vec4(result,1.0);
 }
