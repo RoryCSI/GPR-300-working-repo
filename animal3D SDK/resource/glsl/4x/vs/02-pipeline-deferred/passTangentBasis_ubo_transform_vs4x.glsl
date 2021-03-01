@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	passTangentBasis_ubo_transform_vs4x.glsl
 	Calculate and pass tangent basis using uniform buffers.
@@ -36,6 +38,11 @@
 //		(hint: texcoord transformed to atlas coordinates in a similar fashion)
 
 layout (location = 0) in vec4 aPosition;
+layout (location = 2) in vec3 aNormal;
+layout (location = 8) in vec4 aTexcoord;
+
+layout (location = 10) in vec3 aTangent;
+layout (location = 11) in vec4 aBitTangent;
 
 struct sModelMatrixStack
 {
@@ -57,10 +64,19 @@ uniform int uIndex;
 flat out int vVertexID;
 flat out int vInstanceID;
 
+//view-space varyings
+out vec4 vPosition;
+out vec4 vNormal;
+out vec4 vTexcoord;
+
 void main()
 {
 	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	gl_Position = uModelMatrixStack[uIndex].modelViewProjectionMat * aPosition;
+
+	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
+	vNormal = uModelMatrixStack[uIndex].modelMatInverseTranspose * vec4(aNormal, 0.0); //w should be zero since no scaling.
+	vTexcoord = uModelMatrixStack[uIndex].atlasMat * aTexcoord;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
