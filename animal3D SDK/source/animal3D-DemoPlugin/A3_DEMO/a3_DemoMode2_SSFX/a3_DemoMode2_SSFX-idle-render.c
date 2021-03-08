@@ -385,12 +385,16 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//		(hint: all outputs from previous passes)
 		//	-> activate and send pertinent uniform blocks and values
 		//		(hint: light buffer, light count, inverse bias-projection)
-	/*	// deferred shading
+		// deferred shading
 		//	- similar to light pre-pass but all at once on FSQ
 		currentDemoProgram = demoState->prog_postDeferredShading;
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
-		//...*/
+		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
+		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //Normals
+		//a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit06, 3); //"Position" //No need for this one
+		a3framebufferBindDepthTexture(demoState->fbo_c16x4_d24s8, a3tex_unit07); //Depth
+		//...
 		break;
 	case ssfx_renderModePhongDL:
 		// ****TO-DO:

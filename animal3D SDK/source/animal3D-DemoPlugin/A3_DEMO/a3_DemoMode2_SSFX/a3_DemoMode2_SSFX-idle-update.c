@@ -43,13 +43,14 @@
 
 void a3ssfx_update_graphics(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode)
 {
-	// ****TO-DO:
+	// ****Done:
 	//	-> uncomment transformation and light data uploads
 	//	-> add line to upload light transformations
 	//		(hint: just individual matrices, see scene update)
 	// upload
 	a3bufferRefillOffset(demoState->ubo_transform, 0, 0, sizeof(demoMode->modelMatrixStack), demoMode->modelMatrixStack);
 	a3bufferRefillOffset(demoState->ubo_light, 0, 0, sizeof(demoMode->pointLightData), demoMode->pointLightData);
+	a3bufferRefillOffset(demoState->ubo_mvp, 0, 0, sizeof(demoMode->projectorMatrixStack), demoMode->projectorMatrixStack);
 	//...
 }
 
@@ -130,8 +131,8 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 		//		(hint: in the previous line, we calculate the view-space position)
 		//		(hint: determine the scale part, append position and multiply by 
 		//			projection matrix to arrive at a proper MVP for each light)
-	/*	// update and transform light matrix
-		//...*/
+		// update and transform light matrix
+		//pointLightMVP = a3mat4()
 	}
 }
 

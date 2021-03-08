@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	postDeferredShading_fs4x.glsl
 	Calculate full-screen deferred Phong shading.
@@ -41,12 +43,42 @@
 
 in vec4 vTexcoord_atlas;
 
+uniform sampler2D uImage00; //Diffuse atlas
+uniform sampler2D uImage01; //Specular atlas
+
+uniform sampler2D uImage04; //Scene texcoord
+uniform sampler2D uImage05; //Scene normal
+//uniform sampler2D uImage06; //Scene position //No need for this one
+uniform sampler2D uImage07; //Scene depth
+
 uniform int uCount;
 
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
 {
+
+	//Phong
+	//Ambient
+	//+ diffuse color * diffuse light
+	//+ specular color * specular light
+
+	//have:
+	// -> diffuse and specular color -> atlases
+	// -> g-buffer
+	//have not:
+	// -> light data -> uniform
+
+
+	vec4 sceneTexcoord = texture(uImage04, vTexcoord_atlas.xy);
+
+	vec4 diffuseSample = texture(uImage00, sceneTexcoord.xy);
+	vec4 specularSample = texture(uImage01, sceneTexcoord.xy);
 	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
-	rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
+	//rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
+	
+	// DEBUG
+	//rtFragColor = vTexcoord_atlas;
+
+	rtFragColor = diffuseSample;
 }
