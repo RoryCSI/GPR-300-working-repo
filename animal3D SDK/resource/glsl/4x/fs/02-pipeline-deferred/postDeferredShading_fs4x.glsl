@@ -53,6 +53,8 @@ uniform sampler2D uImage07; //Scene depth
 
 uniform int uCount;
 
+uniform mat4 uPB_inv; //inverse bias
+
 layout (location = 0) out vec4 rtFragColor;
 
 void main()
@@ -74,11 +76,27 @@ void main()
 
 	vec4 diffuseSample = texture(uImage00, sceneTexcoord.xy);
 	vec4 specularSample = texture(uImage01, sceneTexcoord.xy);
+
+	//rebuilding screen position to avoid precision loss
+	vec4 position_screen = vTexcoord_atlas; //get texture xy
+	position_screen.z = texture(uImage07, vTexcoord_atlas.xy).r; //fill in z from the depth buffer to complete the position
+
+	
+	vec4 position_view = uPB_inv * position_screen; //undo bias projection
+	position_view /= position_view.w; //perspective divide - still division
+
+	
+	vec4 normal_view = texture(uImage05, vTexcoord_atlas.xy); //pull normals from texture
+	normal_view = (normal_view - 0.5) * 2.0; //restore from color(0,1) to normal (-1,1) range
+
 	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
 	//rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
 	
 	// DEBUG
 	//rtFragColor = vTexcoord_atlas;
 
-	rtFragColor = diffuseSample;
+	rtFragColor = normal_view;
+
+	//transparency
+	rtFragColor.a = diffuseSample.a;
 }

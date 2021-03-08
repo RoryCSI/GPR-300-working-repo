@@ -69,10 +69,21 @@ out vec4 vPosition;
 out vec4 vNormal;
 out vec4 vTexcoord;
 
+out vec4 vPosition_screen; //pos for screen-space -> G-buffer
+
+const mat4 bias = mat4(
+	0.5, 0.0, 0.0, 0.0,
+	0.0, 0.5, 0.0, 0.0,
+	0.0, 0.0, 0.5, 0.0,
+	0.5, 0.5, 0.5, 1.0
+	);
+
 void main()
 {
 	// DUMMY OUTPUT: directly assign input position to output position
 	gl_Position = uModelMatrixStack[uIndex].modelViewProjectionMat * aPosition;
+
+	vPosition_screen = bias * gl_Position; //bias projection
 
 	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
 	vNormal = uModelMatrixStack[uIndex].modelMatInverseTranspose * vec4(aNormal, 0.0); //w should be zero since no scaling.
