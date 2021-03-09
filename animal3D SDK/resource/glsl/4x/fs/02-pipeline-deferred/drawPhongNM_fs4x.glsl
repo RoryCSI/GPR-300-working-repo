@@ -64,7 +64,9 @@ const vec4 kEyePos_view = vec4(0.0, 0.0, 0.0, 1.0);
 in vec4 vPosition;
 in vec4 vNormal;
 in vec4 vTexcoord;
-in vec4 vTangent;
+in vec3 vTangent; //unused -> TBN
+in vec4 vBiTangent; //unused -> TBN
+in mat3 vTBN; //Tangent, bitanget, normal mat for converting tangent normal
 
 //uniform samplers
 uniform sampler2D uTex_dm;
@@ -88,27 +90,27 @@ void calcPhongPoint(
 	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor
 );
 
-in mat3 vTBN;
-
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+	vec3 tangentNormal = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 - 1.0; //Pull normal from normal map (Tangent space)
+	vec4 finalNormal = vec4(vTBN * normalize(tangentNormal),0.0); //Convert to view space;
 
-	vec3 tangentNormal = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 - 1.0;
-	vec4 worldNormal = vec4(vTBN * normalize(tangentNormal),1.0);
-
+	//To accumulate value in the FOR loop below
+	vec4 finalPhong = vec4(0.0);
 	vec4 diffuse = vec4(0.0);
 	vec4 specular = vec4(0.0);
-	for(int i = 0; i < uCount; i++)
-	{
-		calcPhongPoint(diffuse, specular,
-		vPosition, vTexcoord, worldNormal, texture(uTex_dm, vTexcoord.xy),
-		uPointLightData[i].position, 
-		vec4(uPointLightData[i].radius, uPointLightData[i].radiusSq, uPointLightData[i].radiusInv, uPointLightData[i].radiusInvSq),
-		uPointLightData[i].color);
 
-		rtFragColor = (diffuse + specular);
+	for(int i = 0; i < MAX_LIGHTS; i++)
+	{
+		//CommonUtil Phong Function 
+		calcPhongPoint(diffuse, specular, //Output results into diffuse, specular
+		-normalize(vPosition), vPosition, finalNormal, texture(uTex_dm, vTexcoord.xy),//eyeVec, fragPos, fragNrm, fragColor
+		uPointLightData[i].position, //light pos,
+		vec4(uPointLightData[i].radius, uPointLightData[i].radiusSq, uPointLightData[i].radiusInv, uPointLightData[i].radiusInvSq),//light radius
+		uPointLightData[i].color);//light color
+
+		finalPhong += (diffuse + specular);//sum calculations for final
 	}
 
+	rtFragColor = vec4(finalPhong.xyz, 1.0);//set ALPHA to 1.0 to avoid phantom menace
 }
