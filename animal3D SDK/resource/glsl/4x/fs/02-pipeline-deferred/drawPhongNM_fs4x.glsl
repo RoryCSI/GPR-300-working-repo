@@ -36,12 +36,40 @@
 //	-> implement loop in main to calculate and accumulate light
 //	-> calculate and output final Phong sum
 
-uniform int uCount;
+//Lighting data
+struct sPointLightData
+{
+	vec4 position;						// position in rendering target space
+	vec4 worldPos;						// original position in world space
+	vec4 color;							// RGB color with padding
+	float radius;						// radius (distance of effect from center)
+	float radiusSq;						// radius squared (if needed)
+	float radiusInv;					// radius inverse (attenuation factor)
+	float radiusInvSq;					// radius inverse squared (attenuation factor)
+};
+//Lighting Block
+uniform ubLight
+{
+	sPointLightData uPointLightData[MAX_LIGHTS];
+};
 
 layout (location = 0) out vec4 rtFragColor;
 
+uniform int uCount;
+
 // location of viewer in its own space is the origin
 const vec4 kEyePos_view = vec4(0.0, 0.0, 0.0, 1.0);
+
+//View-space varyings
+in vec4 vPosition;
+in vec4 vNormal;
+in vec4 vTexcoord;
+in vec4 vTangent;
+
+//uniform samplers
+uniform sampler2D uTex_dm;
+uniform sampler2D uTex_sm;
+uniform sampler2D uTex_nm;
 
 // declaration of Phong shading model
 //	(implementation in "utilCommon_fs4x.glsl")
@@ -60,8 +88,27 @@ void calcPhongPoint(
 	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor
 );
 
+in mat3 vTBN;
+
 void main()
 {
 	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
 	rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
+
+	vec3 tangentNormal = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 - 1.0;
+	vec4 worldNormal = vec4(vTBN * normalize(tangentNormal),1.0);
+
+	vec4 diffuse = vec4(0.0);
+	vec4 specular = vec4(0.0);
+	for(int i = 0; i < uCount; i++)
+	{
+		calcPhongPoint(diffuse, specular,
+		vPosition, vTexcoord, worldNormal, texture(uTex_dm, vTexcoord.xy),
+		uPointLightData[i].position, 
+		vec4(uPointLightData[i].radius, uPointLightData[i].radiusSq, uPointLightData[i].radiusInv, uPointLightData[i].radiusInvSq),
+		uPointLightData[i].color);
+
+		rtFragColor = (diffuse + specular);
+	}
+
 }

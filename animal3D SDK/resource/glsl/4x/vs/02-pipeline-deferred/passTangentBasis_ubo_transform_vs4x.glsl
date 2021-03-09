@@ -37,13 +37,6 @@
 //		(hint: complete tangent basis [TBNP] transformed to view-space)
 //		(hint: texcoord transformed to atlas coordinates in a similar fashion)
 
-layout (location = 0) in vec4 aPosition;
-layout (location = 2) in vec3 aNormal;
-layout (location = 8) in vec4 aTexcoord;
-
-layout (location = 10) in vec3 aTangent;
-layout (location = 11) in vec4 aBitTangent;
-
 struct sModelMatrixStack
 {
 	mat4 modelMat;						// model matrix (object -> world)
@@ -59,6 +52,14 @@ uniform ubTransformStack
 {
 	sModelMatrixStack uModelMatrixStack[MAX_OBJECTS];
 };
+
+layout (location = 0) in vec4 aPosition;
+layout (location = 2) in vec3 aNormal;
+layout (location = 8) in vec4 aTexcoord;
+
+layout (location = 10) in vec3 aTangent;
+layout (location = 11) in vec4 aBiTangent;
+
 uniform int uIndex;
 
 flat out int vVertexID;
@@ -68,8 +69,12 @@ flat out int vInstanceID;
 out vec4 vPosition;
 out vec4 vNormal;
 out vec4 vTexcoord;
+out vec3 vTangent;
+out vec4 vBiTangent;
 
 out vec4 vPosition_screen; //pos for screen-space -> G-buffer
+
+out mat3 vTBN;
 
 const mat4 bias = mat4(
 	0.5, 0.0, 0.0, 0.0,
@@ -88,6 +93,19 @@ void main()
 	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
 	vNormal = uModelMatrixStack[uIndex].modelMatInverseTranspose * vec4(aNormal, 0.0); //w should be zero since no scaling.
 	vTexcoord = uModelMatrixStack[uIndex].atlasMat * aTexcoord;
+
+	mat3 TBNP = mat3(normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aTangent,   0.0))), 
+					normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * aBiTangent)), 
+					normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aNormal,    0.0))));
+
+	mat3 TBN = mat3(normalize(aTangent), 
+					normalize(vec3(aBiTangent)), 
+					normalize(vec3(aNormal)));
+
+	vTBN = TBN;
+
+	vTangent = aTangent;
+	vBiTangent = aBiTangent;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
