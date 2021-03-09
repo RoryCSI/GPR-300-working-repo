@@ -54,6 +54,9 @@ uniform ubLight
 };
 
 layout (location = 0) out vec4 rtFragColor;
+layout (location = 1) out vec4 rtNormal;
+layout (location = 2) out vec4 rtDiffuse;
+layout (location = 3) out vec4 rtSpecular;
 
 uniform int uCount;
 
@@ -97,6 +100,9 @@ void main()
 
 	//To accumulate value in the FOR loop below
 	vec4 finalPhong = vec4(0.0);
+	vec4 finalDiffuse = vec4(0.0);
+	vec4 finalSpecular = vec4(0.0);
+
 	vec4 diffuse = vec4(0.0);
 	vec4 specular = vec4(0.0);
 
@@ -110,7 +116,13 @@ void main()
 		uPointLightData[i].color);//light color
 
 		finalPhong += (diffuse + specular);//sum calculations for final
+		finalDiffuse += diffuse;
+		finalSpecular += specular;
 	}
 
+	//Output for all buffers
+	rtNormal = finalNormal;
+	rtDiffuse = texture(uTex_dm, vTexcoord.xy);
+	rtSpecular = texture(uTex_sm, vTexcoord.xy);
 	rtFragColor = vec4(finalPhong.xyz, 1.0);//set ALPHA to 1.0 to avoid phantom menace
 }
