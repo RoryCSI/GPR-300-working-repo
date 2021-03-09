@@ -75,6 +75,7 @@ out vec4 vBiTangent;
 out vec4 vPosition_screen; //pos for screen-space -> G-buffer
 
 out mat3 vTBN;
+out mat4 vTBNP;
 
 const mat4 bias = mat4(
 	0.5, 0.0, 0.0, 0.0,
@@ -90,16 +91,21 @@ void main()
 	vPosition_screen = bias * gl_Position; //bias projection
 
 	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
-	vNormal = uModelMatrixStack[uIndex].modelMatInverseTranspose * vec4(aNormal, 0.0); //w should be zero since no scaling.
+	vNormal = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aNormal, 0.0); //w should be zero since no scaling.
 	vTexcoord = uModelMatrixStack[uIndex].atlasMat * aTexcoord; //From whole atlas to cell space
 
-	//Calculate tangent, bitangent, normal matrix for converting tangent normal to view space in fragment shader
-	vTBN = mat3(normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aTangent,   0.0))), 
-				normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * aBiTangent)), 
-				normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aNormal,    0.0))));
+	vTangent = normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aTangent, 0.0)));
+	vBiTangent = normalize(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * aBiTangent);
 
-	vTangent = aTangent;
-	vBiTangent = aBiTangent;
+	//Calculate tangent, bitangent, normal matrix for converting tangent normal to view space in fragment shader
+	vTBN = mat3(normalize(vTangent), 
+				normalize(vec3(vBiTangent)), 
+				normalize(vNormal));
+
+//	vTBN = mat3(normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aTangent, 0.0))), 
+//				normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * aBiTangent)), 
+//				normalize(vec3(vNormal)));
+
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;

@@ -37,20 +37,31 @@
 in vec4 vPosition;
 in vec4 vNormal;
 in vec4 vTexcoord;
+in vec3 vTangent;
+in vec4 vBiTangent;
+in mat3 vTBN;
 
 in vec4 vPosition_screen;
+
 
 //layout (location = 0) out vec4 rtFragColor;
 layout (location = 0) out vec4 rtTexcoord;
 layout (location = 1) out vec4 rtNormal;
 layout (location = 3) out vec4 rtPosition;
 
+uniform sampler2D uTex_nm;
+uniform sampler2D uImage05;
+
+in mat4 vTBNP;
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE MAGENTA
-	//rtFragColor = vec4(1.0, 0.0, 1.0, 1.0);
 	rtTexcoord = vTexcoord;
-	rtNormal = vec4(normalize(vNormal.xyz) * 0.5 + 0.5, 1.0);
+
+	vec3 tangentNormal = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 - 1.0; //Pull normal from normal map (Tangent space)
+	vec4 finalNormal = vec4(vTBN * normalize(tangentNormal),0.0); //Convert to view space;
+	rtNormal = vec4(normalize(vNormal.xyz) * 0.5 + 0.5, 0.0);
+	//rtNormal *= texture(uTex_nm, vTexcoord.xy);
+	//rtNormal = finalNormal;
 	//rtPosition = vPosition;
 
 	rtPosition = vPosition_screen / vPosition_screen.w; //perspective divide

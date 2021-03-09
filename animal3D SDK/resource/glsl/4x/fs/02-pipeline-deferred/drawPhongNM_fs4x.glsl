@@ -96,7 +96,7 @@ void calcPhongPoint(
 void main()
 {
 	vec3 tangentNormal = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 - 1.0; //Pull normal from normal map (Tangent space)
-	vec4 finalNormal = vec4(vTBN * normalize(tangentNormal),0.0); //Convert to view space;
+	vec4 finalNormal = vec4(vTBN * normalize(tangentNormal), 0.0); //Convert to view space;
 
 	//To accumulate value in the FOR loop below
 	vec4 finalPhong = vec4(0.0);
