@@ -333,10 +333,15 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		a3shaderProgramActivate(currentDemoProgram->program);
 
 		//activate pertinent textures for deferred lighting composition
-		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
+		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); //Diffuse texture atlas
+		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01); //Specular texture atlas
+		a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02); //Normal texture atlas
+		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03); //Height texture atlas
+
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //Normals
 		a3framebufferBindDepthTexture(demoState->fbo_c16x4_d24s8, a3tex_unit07); //Depth
+
 
 		//Data for lighting
 		a3shaderUniformBufferActivate(demoState->ubo_transform, demoProg_blockTransformStack);
@@ -403,12 +408,16 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//	- similar to light pre-pass but all at once on FSQ
 		currentDemoProgram = demoState->prog_postDeferredShading;
 		a3shaderProgramActivate(currentDemoProgram->program);
-		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
+
+		//activate pertinent textures for deferred lighting composition
+		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); //Diffuse texture atlas
+		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01); //Specular texture atlas
+		a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02); //Normal texture atlas
+		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03); //Height texture atlas
+
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //Normals
-		//a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit06, 3); //"Position" //No need for this one
 		a3framebufferBindDepthTexture(demoState->fbo_c16x4_d24s8, a3tex_unit07); //Depth
-		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm);
 		
 		//send light info, inverse bias projection mat
 		a3shaderUniformBufferActivate(demoState->ubo_transform, demoProg_blockTransformStack);
@@ -425,10 +434,17 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//	- simple composition: multiply lighting colors by respective texture sample
 		currentDemoProgram = demoState->prog_postDeferredLightingComposite;
 		a3shaderProgramActivate(currentDemoProgram->program);
-		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); // diffuse texture atlas
+
+		//activate pertinent textures for deferred lighting composition
+		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); //Diffuse texture atlas
+		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01); //Specular texture atlas
+		a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02); //Normal texture atlas
+		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03); //Height texture atlas
+
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //Normals
 		a3framebufferBindDepthTexture(demoState->fbo_c16x4_d24s8, a3tex_unit07); //Depth
+
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm);
 		break;
 	}
