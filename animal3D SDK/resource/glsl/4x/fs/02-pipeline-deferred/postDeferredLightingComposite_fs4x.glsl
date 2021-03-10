@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	postDeferredLightingComposite_fs4x.glsl
 	Composite results of light pre-pass in deferred pipeline.
@@ -34,8 +36,34 @@ in vec4 vTexcoord_atlas;
 
 layout (location = 0) out vec4 rtFragColor;
 
+uniform sampler2D uImage00; //Diffuse texture atlas
+uniform sampler2D uImage01; //Specular texture atlas
+
+uniform sampler2D uImage02; //pre-pass diffuse output
+uniform sampler2D uImage03; //pre-pass specular output
+
+uniform sampler2D uImage04; //Texcoords
+uniform sampler2D uImage05; //Normals
+uniform sampler2D uImage07; //Depth texture
+
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE AQUA
-	rtFragColor = vec4(0.0, 1.0, 0.5, 1.0);
+	
+	vec4 sceneTexcoord = texture(uImage04, vTexcoord_atlas.xy);
+
+	//vec4 scenePosition = vec4(texture(uImage04, vTexcoord_atlas.xy).xy, texture(uImage07, vTexcoord_atlas.xy).z, 1.0);
+
+	//vec4 normal = texture(uImage05, vTexcoord_atlas.xy);
+
+	vec4 diffuseColor = texture(uImage00, sceneTexcoord.xy);
+	vec4 specularColor = texture(uImage01, sceneTexcoord.xy);
+
+	vec4 rtDiffuseLight = texture(uImage02, sceneTexcoord.xy);
+	vec4 rtSpecularLight = texture(uImage03, sceneTexcoord.xy);
+
+	//(diffuse light)(diffuse color) + (specular light)(specular color) + (dim ambient constant color).
+	rtFragColor = (diffuseColor * rtDiffuseLight) + (specularColor * rtSpecularLight) + vec4(0.1,0.1,0.1,1.0) ;
+	//rtFragColor = diffuseColor * rtDiffuseLight;
+	//rtFragColor = rtDiffuseLight;
+	rtFragColor.a = 1.0;
 }

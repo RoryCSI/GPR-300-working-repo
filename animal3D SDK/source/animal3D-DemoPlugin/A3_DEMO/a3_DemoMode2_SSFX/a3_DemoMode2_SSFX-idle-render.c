@@ -360,6 +360,7 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		a3shaderProgramActivate(currentDemoProgram->program);
 		//...
 		a3vertexDrawableActivateAndRenderInstanced(demoState->draw_unit_sphere, ssfxMaxCount_pointLight);
+		//a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockTransformStack);
 		//...
 	}
 
@@ -413,8 +414,6 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//activate pertinent textures for deferred lighting composition
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); //Diffuse texture atlas
 		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01); //Specular texture atlas
-		a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02); //Normal texture atlas
-		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03); //Height texture atlas
 
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //Normals
@@ -440,12 +439,15 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//activate pertinent textures for deferred lighting composition
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); //Diffuse texture atlas
 		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01); //Specular texture atlas
-		a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02); //Normal texture atlas
-		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03); //Height texture atlas
+		//a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02); //Normal texture atlas
+		//a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03); //Height texture atlas
 
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //Normals
 		a3framebufferBindDepthTexture(demoState->fbo_c16x4_d24s8, a3tex_unit07); //Depth
+
+		a3framebufferBindColorTexture(writeFBO[ssfx_renderPassLights], a3tex_unit02, 0);
+		a3framebufferBindColorTexture(writeFBO[ssfx_renderPassLights], a3tex_unit03, 1);
 
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm);
 		break;

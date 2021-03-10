@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	passClipBiased_transform_instanced_vs4x.glsl
 	Calculate and biased clip coordinate with instancing.
@@ -33,10 +35,17 @@
 //	-> calculate and copy biased clip to varying
 //		(hint: bias matrix is provided as a constant)
 
+uniform ubMVP
+{
+	mat4 lightMVP[MAX_INSTANCES];
+};
+
 layout (location = 0) in vec4 aPosition;
 
 flat out int vVertexID;
-flat out int vInstanceID;
+flat out int vInstanceID; //instance ID = index
+
+out vec4 vBiasedClipPosition;
 
 // bias matrix
 const mat4 bias = mat4(
@@ -48,8 +57,9 @@ const mat4 bias = mat4(
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	gl_Position = aPosition;
+	gl_Position = lightMVP[vInstanceID] * aPosition;
+
+	vBiasedClipPosition = bias * lightMVP[vInstanceID] * aPosition;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
