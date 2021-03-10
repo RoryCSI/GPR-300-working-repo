@@ -346,6 +346,7 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//Data for lighting
 		a3shaderUniformBufferActivate(demoState->ubo_transform, demoProg_blockTransformStack);
 		a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight);
+		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, renderModeLightCount + renderMode);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm);
 
 		currentWriteFBO = writeFBO[ssfx_renderPassLights];
@@ -422,6 +423,7 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//send light info, inverse bias projection mat
 		a3shaderUniformBufferActivate(demoState->ubo_transform, demoProg_blockTransformStack);
 		a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight);
+		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, renderModeLightCount + renderMode);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm);
 
 		break;
