@@ -75,7 +75,6 @@ out vec4 vBiTangent;
 out vec4 vPosition_screen; //pos for screen-space -> G-buffer
 
 out mat3 vTBN;
-out mat4 vTBNP;
 
 const mat4 bias = mat4(
 	0.5, 0.0, 0.0, 0.0,

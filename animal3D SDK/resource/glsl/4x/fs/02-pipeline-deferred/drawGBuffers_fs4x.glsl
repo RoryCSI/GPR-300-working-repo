@@ -57,9 +57,8 @@ void main()
 	rtTexcoord = vTexcoord;
 
 	vec3 tangentNormal = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 - 1.0; //Pull normal from normal map (Tangent space), stretch back to normal range (-1,1)
-	vec4 finalNormal = vec4(vTBN * tangentNormal,0.0) * 0.5 + 0.5; //Convert to view space and squish again for proper g-buffer storage;
+	vec4 finalNormal = vec4(vTBN * tangentNormal,0.0) * 0.5 + 0.5; //Convert to view space then squish again for proper g-buffer storage;
 	rtNormal = finalNormal;
-	//rtPosition = vPosition;
 
 	rtPosition = vPosition_screen / vPosition_screen.w; //perspective divide
 }

@@ -60,19 +60,16 @@ uniform ubLight
 
 in vec4 vTexcoord_atlas;
 
-uniform sampler2D uTex_nm;
-
 uniform sampler2D uImage00; //Diffuse atlas
 uniform sampler2D uImage01; //Specular atlas
 
 uniform sampler2D uImage04; //Scene texcoord
 uniform sampler2D uImage05; //Scene normal
-//uniform sampler2D uImage06; //Scene position //No need for this one
 uniform sampler2D uImage07; //Scene depth
 
 uniform int uCount;
 
-uniform mat4 uPB_inv; //inverse bias
+uniform mat4 uPB_inv; //inverse bias projection matrix
 
 layout (location = 0) out vec4 rtFragColor;
 
@@ -82,25 +79,12 @@ void calcPhongPoint(
 	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor
 );
 
-in mat3 vTBN;
 void main()
 {
-
-	//Phong
-	//Ambient
-	//+ diffuse color * diffuse light
-	//+ specular color * specular light
-
-	//have:
-	// -> diffuse and specular color -> atlases
-	// -> g-buffer
-	//have not:
-	// -> light data -> uniform
-
 	vec4 sceneTexcoord = texture(uImage04, vTexcoord_atlas.xy);
 
-	vec4 diffuseSample = texture(uImage00, sceneTexcoord.xy);
-	vec4 specularSample = texture(uImage01, sceneTexcoord.xy);
+	vec4 diffuseSample = texture(uImage00, sceneTexcoord.xy); //Grab diffuse color using just calculated sceneTexcoord
+	vec4 specularSample = texture(uImage01, sceneTexcoord.xy); //Grab specular color using just calculated sceneTexcoord
 
 	//rebuilding screen position to avoid precision loss
 	vec4 position_screen = vTexcoord_atlas; //get texture xy
@@ -112,6 +96,7 @@ void main()
 	vec4 normal_view = texture(uImage05, vTexcoord_atlas.xy); //pull normals from texture
 	normal_view = (normal_view - 0.5) * 2.0; //restore from color(0,1) to normal (-1,1) range
 
+	//For accumulating in the FOR loop below
 	vec4 finalPhong = vec4(0.0);
 	vec4 diffuse = vec4(0.0);
 	vec4 specular = vec4(0.0);
@@ -127,12 +112,9 @@ void main()
 
 		finalPhong += (diffuse + specular);//sum calculations for final
 	}
-	
-	// DEBUG
-	//rtFragColor = vTexcoord_atlas;
 
 	rtFragColor = finalPhong;
 
 	//transparency
-	rtFragColor.a = diffuseSample.a;
+	rtFragColor.a = diffuseSample.a; //avoid ghosts
 }
