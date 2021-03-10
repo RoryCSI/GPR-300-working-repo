@@ -52,16 +52,13 @@ layout (location = 3) out vec4 rtPosition;
 uniform sampler2D uTex_nm;
 uniform sampler2D uImage05;
 
-in mat4 vTBNP;
 void main()
 {
 	rtTexcoord = vTexcoord;
 
-	vec3 tangentNormal = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 - 1.0; //Pull normal from normal map (Tangent space)
-	vec4 finalNormal = vec4(vTBN * normalize(tangentNormal),0.0); //Convert to view space;
-	rtNormal = vec4(normalize(vNormal.xyz) * 0.5 + 0.5, 0.0);
-	//rtNormal *= texture(uTex_nm, vTexcoord.xy);
-	//rtNormal = finalNormal;
+	vec3 tangentNormal = texture(uTex_nm, vTexcoord.xy).xyz * 2.0 - 1.0; //Pull normal from normal map (Tangent space), stretch back to normal range (-1,1)
+	vec4 finalNormal = vec4(vTBN * tangentNormal,0.0) * 0.5 + 0.5; //Convert to view space and squish again for proper g-buffer storage;
+	rtNormal = finalNormal;
 	//rtPosition = vPosition;
 
 	rtPosition = vPosition_screen / vPosition_screen.w; //perspective divide

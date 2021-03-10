@@ -41,7 +41,26 @@
 //		back to view-space, perspective divide)
 //	-> calculate and accumulate final diffuse and specular shading
 
+//Lighting data
+struct sPointLightData
+{
+	vec4 position;						// position in rendering target space
+	vec4 worldPos;						// original position in world space
+	vec4 color;							// RGB color with padding
+	float radius;						// radius (distance of effect from center)
+	float radiusSq;						// radius squared (if needed)
+	float radiusInv;					// radius inverse (attenuation factor)
+	float radiusInvSq;					// radius inverse squared (attenuation factor)
+};
+//Lighting Block
+uniform ubLight
+{
+	sPointLightData uPointLightData[MAX_LIGHTS];
+};
+
 in vec4 vTexcoord_atlas;
+
+uniform sampler2D uTex_nm;
 
 uniform sampler2D uImage00; //Diffuse atlas
 uniform sampler2D uImage01; //Specular atlas
@@ -57,6 +76,13 @@ uniform mat4 uPB_inv; //inverse bias
 
 layout (location = 0) out vec4 rtFragColor;
 
+void calcPhongPoint(
+	out vec4 diffuseColor, out vec4 specularColor,
+	in vec4 eyeVec, in vec4 fragPos, in vec4 fragNrm, in vec4 fragColor,
+	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor
+);
+
+in mat3 vTBN;
 void main()
 {
 
@@ -71,7 +97,6 @@ void main()
 	//have not:
 	// -> light data -> uniform
 
-
 	vec4 sceneTexcoord = texture(uImage04, vTexcoord_atlas.xy);
 
 	vec4 diffuseSample = texture(uImage00, sceneTexcoord.xy);
@@ -80,22 +105,33 @@ void main()
 	//rebuilding screen position to avoid precision loss
 	vec4 position_screen = vTexcoord_atlas; //get texture xy
 	position_screen.z = texture(uImage07, vTexcoord_atlas.xy).r; //fill in z from the depth buffer to complete the position
-
 	
 	vec4 position_view = uPB_inv * position_screen; //undo bias projection
 	position_view /= position_view.w; //perspective divide - still division
 
-	
 	vec4 normal_view = texture(uImage05, vTexcoord_atlas.xy); //pull normals from texture
 	normal_view = (normal_view - 0.5) * 2.0; //restore from color(0,1) to normal (-1,1) range
 
-	// DUMMY OUTPUT: all fragments are OPAQUE ORANGE
-	//rtFragColor = vec4(1.0, 0.5, 0.0, 1.0);
+	vec4 finalPhong = vec4(0.0);
+	vec4 diffuse = vec4(0.0);
+	vec4 specular = vec4(0.0);
+
+	for(int i = 0; i < MAX_LIGHTS; i++)
+	{
+		//CommonUtil Phong Function 
+		calcPhongPoint(diffuse, specular, //Output results into diffuse, specular
+		-normalize(position_view), position_view, normal_view, diffuseSample,//eyeVec, fragPos, fragNrm, fragColor
+		uPointLightData[i].position, //light pos,
+		vec4(uPointLightData[i].radius, uPointLightData[i].radiusSq, uPointLightData[i].radiusInv, uPointLightData[i].radiusInvSq),//light radius
+		uPointLightData[i].color);//light color
+
+		finalPhong += (diffuse + specular);//sum calculations for final
+	}
 	
 	// DEBUG
 	//rtFragColor = vTexcoord_atlas;
 
-	rtFragColor = normal_view;
+	rtFragColor = finalPhong;
 
 	//transparency
 	rtFragColor.a = diffuseSample.a;
