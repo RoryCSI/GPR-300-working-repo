@@ -345,9 +345,10 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 
 		//Data for lighting
 		a3shaderUniformBufferActivate(demoState->ubo_transform, demoProg_blockTransformStack);
-		a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight);
+		a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight);;
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uCount, 1, renderModeLightCount + renderMode);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->ubTransformMVP, ssfxMaxCount_pointLight, demoMode->pointLightMVP->mm);
 
 		currentWriteFBO = writeFBO[ssfx_renderPassLights];
 		a3framebufferActivate(currentWriteFBO);
@@ -358,19 +359,13 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//		point lights are spheres), and using additive blending
 		currentDemoProgram = demoState->prog_drawPhongPointLight_instanced;
 		a3shaderProgramActivate(currentDemoProgram->program);
-		a3demo_enableAdditiveBlending();
-		glCullFace(GL_FRONT);
-		a3vertexDrawableActivateAndRenderInstanced(demoState->draw_unit_sphere, ssfxMaxCount_pointLight);
-		//for (int i = 0; i < ssfxMaxCount_pointLight; i++)
-		//{
-		//	//a3real4x4Product(modelViewProjectionMat.m, demoMode->pointLightMVP[i].m, currentSceneObject->modelMatrixStackPtr->modelMat.m);
-			//a3shaderUniformBufferActivate(demoState->ubo_mvp, demoProg_blockTransformStack);
-			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->ubTransformMVP, 1, demoMode->pointLightMVP->mm);
-		//}
+
+		a3demo_enableAdditiveBlending();//To collect the instanced lights combined strength
+		glCullFace(GL_FRONT);//To "invert" the unit spheres
+		a3vertexDrawableActivateAndRenderInstanced(demoState->draw_unit_sphere, ssfxMaxCount_pointLight);//Draw lights
+		//a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->ubTransformMVP, 1, demoMode->pointLightMVP->mm);
 		glCullFace(GL_BACK);
-		a3demo_enableCompositeBlending();
-		//a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockTransformStack);
-		//...
+		a3demo_enableCompositeBlending();//Set back to composite
 	}
 
 
