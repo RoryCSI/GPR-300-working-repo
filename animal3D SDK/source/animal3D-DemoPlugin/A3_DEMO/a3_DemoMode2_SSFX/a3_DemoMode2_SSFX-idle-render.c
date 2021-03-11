@@ -335,8 +335,8 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//activate pertinent textures for deferred lighting composition
 		a3textureActivate(demoState->tex_atlas_dm, a3tex_unit00); //Diffuse texture atlas
 		a3textureActivate(demoState->tex_atlas_sm, a3tex_unit01); //Specular texture atlas
-		a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02); //Normal texture atlas
-		a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03); //Height texture atlas
+		//a3textureActivate(demoState->tex_atlas_nm, a3tex_unit02); //Normal texture atlas
+		//a3textureActivate(demoState->tex_atlas_hm, a3tex_unit03); //Height texture atlas
 
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //Normals
@@ -358,8 +358,17 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		//		point lights are spheres), and using additive blending
 		currentDemoProgram = demoState->prog_drawPhongPointLight_instanced;
 		a3shaderProgramActivate(currentDemoProgram->program);
-		//...
+		a3demo_enableAdditiveBlending();
+		glCullFace(GL_FRONT);
 		a3vertexDrawableActivateAndRenderInstanced(demoState->draw_unit_sphere, ssfxMaxCount_pointLight);
+		//for (int i = 0; i < ssfxMaxCount_pointLight; i++)
+		//{
+		//	//a3real4x4Product(modelViewProjectionMat.m, demoMode->pointLightMVP[i].m, currentSceneObject->modelMatrixStackPtr->modelMat.m);
+			//a3shaderUniformBufferActivate(demoState->ubo_mvp, demoProg_blockTransformStack);
+			a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->ubTransformMVP, 1, demoMode->pointLightMVP->mm);
+		//}
+		glCullFace(GL_BACK);
+		a3demo_enableCompositeBlending();
 		//a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockTransformStack);
 		//...
 	}
@@ -445,9 +454,10 @@ void a3ssfx_render(a3_DemoState const* demoState, a3_DemoMode2_SSFX const* demoM
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit04, 0); //Texcoords
 		a3framebufferBindColorTexture(demoState->fbo_c16x4_d24s8, a3tex_unit05, 1); //Normals
 		a3framebufferBindDepthTexture(demoState->fbo_c16x4_d24s8, a3tex_unit07); //Depth
-
+		
 		a3framebufferBindColorTexture(writeFBO[ssfx_renderPassLights], a3tex_unit02, 0);
 		a3framebufferBindColorTexture(writeFBO[ssfx_renderPassLights], a3tex_unit03, 1);
+		a3framebufferActivate(currentWriteFBO);
 
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm);
 		break;
