@@ -122,15 +122,32 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 		i < ssfxMaxCount_pointLight;
 		++i, ++pointLightData)
 	{
-		//if (pointLightData->worldPos.v <= demoMode->lightTargetPos[i].v)
-		if (a3real4Distance(&pointLightData->worldPos.p, &demoMode->lightTargetPos[i].p) <= 1)
+		if (pointLightData->worldPos.x >= 10.0f)
 		{
-			a3vec4 newTargetPos = {pointLightData->worldPos.x + a3randomRange(-1, 1),
-									pointLightData->worldPos.y + a3randomRange(-1, 1),
-									pointLightData->worldPos.z + a3randomRange(-1, 1),
-									pointLightData->worldPos.w};
+			demoMode->lightTargetPos[i].z = a3randomRange(4.0f, 7.9f);
+		}
+		else if (pointLightData->worldPos.x <= -10.0f)
+		{
+			demoMode->lightTargetPos[i].z = a3randomRange(0.0f, 3.9f);
+		}
+		if (demoMode->lightTargetPos[i].z < 4.0f)
+		{
+			a3vec4 newTargetPos = {pointLightData->worldPos.x + a3randomRange(0.1f, 0.2f),
+								pointLightData->worldPos.y + a3randomRange(-0.2f, 0.2f),
+								demoMode->lightTargetPos[i].z,
+								1};
 			demoMode->lightTargetPos[i] = newTargetPos;
 		}
+		else if (demoMode->lightTargetPos[i].z < 8.0f)
+		{
+			a3vec4 newTargetPos = {pointLightData->worldPos.x + a3randomRange(-0.1f, -0.2f),
+								pointLightData->worldPos.y + a3randomRange(-0.2f, 0.2f),
+								demoMode->lightTargetPos[i].z,
+								1};
+			demoMode->lightTargetPos[i] = newTargetPos;
+		}
+		
+
 		//a3real4Lerp(pointLightData->worldPos.v, &pointLightData->worldPos.p, &demoMode->lightTargetPos[i].p, demoState->t_timer);
 		//a3vec4 newWorldPos = {(demoMode->lightTargetPos[i].v - pointLightData->worldPos.v) * a3real_sixth};
 		a3vec4 newWorldPos = demoMode->lightTargetPos[i];
