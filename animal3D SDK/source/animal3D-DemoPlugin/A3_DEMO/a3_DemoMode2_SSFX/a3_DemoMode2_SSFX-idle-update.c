@@ -118,6 +118,24 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 	a3demo_updateSceneObjectStack(demoMode->obj_ground, projector);
 
 	// update light positions and transforms
+	for (i = 0, pointLightData = demoMode->pointLightData;
+		i < ssfxMaxCount_pointLight;
+		++i, ++pointLightData)
+	{
+		//if (pointLightData->worldPos.v <= demoMode->lightTargetPos[i].v)
+		if (a3real4Distance(&pointLightData->worldPos.p, &demoMode->lightTargetPos[i].p) <= 1)
+		{
+			a3vec4 newTargetPos = {pointLightData->worldPos.x + a3randomRange(-1, 1),
+									pointLightData->worldPos.y + a3randomRange(-1, 1),
+									pointLightData->worldPos.z + a3randomRange(-1, 1),
+									pointLightData->worldPos.w};
+			demoMode->lightTargetPos[i] = newTargetPos;
+		}
+		//a3real4Lerp(pointLightData->worldPos.v, &pointLightData->worldPos.p, &demoMode->lightTargetPos[i].p, demoState->t_timer);
+		//a3vec4 newWorldPos = {(demoMode->lightTargetPos[i].v - pointLightData->worldPos.v) * a3real_sixth};
+		a3vec4 newWorldPos = demoMode->lightTargetPos[i];
+		pointLightData->worldPos = newWorldPos;
+	}
 	for (i = 0, pointLightData = demoMode->pointLightData, pointLightMVP = demoMode->pointLightMVP;
 		i < ssfxMaxCount_pointLight;
 		++i, ++pointLightData, ++pointLightMVP)
@@ -132,7 +150,12 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 		//		(hint: determine the scale part, append position and multiply by 
 		//			projection matrix to arrive at a proper MVP for each light)
 		// update and transform light matrix
-		//pointLightMVP = a3mat4()
+		a3mat4 posAndScale = {	pointLightData->radius, 0, 0, pointLightData->position.x,
+						0, pointLightData->radius, 0, pointLightData->position.y,
+						0, 0, pointLightData->radius, pointLightData->position.z,
+						0, 0, 0, 1};
+
+		a3real4x4Product(pointLightMVP->m, projector->projectorMatrixStackPtr->projectionMat.m, posAndScale.m);
 	}
 }
 

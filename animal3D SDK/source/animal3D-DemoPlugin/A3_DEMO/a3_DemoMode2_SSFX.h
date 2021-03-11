@@ -174,6 +174,7 @@ struct a3_DemoMode2_SSFX
 	//};
 	a3_PointLightData pointLightData[ssfxMaxCount_pointLight];
 	a3mat4 pointLightMVP[ssfxMaxCount_pointLight];
+	a3vec4 lightTargetPos[ssfxMaxCount_pointLight];
 };
 
 
