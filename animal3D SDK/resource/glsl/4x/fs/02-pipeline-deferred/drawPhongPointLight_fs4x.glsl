@@ -28,7 +28,7 @@
 
 #define MAX_LIGHTS 1024
 
-// ****TO-DO:
+// ****Done:
 //	-> declare biased clip coordinate varying from vertex shader
 //	-> declare point light data structure and uniform block
 //	-> declare pertinent samplers with geometry data ("g-buffers")
@@ -66,7 +66,7 @@ in vec4 vBiasedClipPosition;
 
 uniform sampler2D uImage00; //Diffuse atlas
 uniform sampler2D uImage01; //Specular atlas
-uniform sampler2D uImage02;
+
 uniform sampler2D uImage04; //Scene texcoord
 uniform sampler2D uImage05; //Scene normal
 uniform sampler2D uImage07; //Scene depth
@@ -79,17 +79,14 @@ void calcPhongPoint(
 
 uniform mat4 uPB_inv;
 
-
 void main()
 {
-	vec4 screenSpaceCoord =  vBiasedClipPosition / vBiasedClipPosition.w;
-
-	//vec4 sceneTexcoord = texture(uImage04, screenSpaceCoord.xy);
+	vec4 screenSpaceCoord =  vBiasedClipPosition / vBiasedClipPosition.w;//Calculate screen-space coordinate
 
 	vec4 diffuseSample = texture(uImage00, screenSpaceCoord.xy); //Grab diffuse color using just calculated sceneTexcoord
 	vec4 specularSample = texture(uImage01, screenSpaceCoord.xy); //Grab specular color using just calculated sceneTexcoord
 
-	//rebuilding screen position to avoid precision loss
+	//rebuilding screen position to avoid precision loss ----->>>>> Problem seems to be in position_screen, position_view, and normal_view 
 	vec4 position_screen = screenSpaceCoord; //get texture xy
 	position_screen.z = texture(uImage07, screenSpaceCoord.xy).r; //fill in z from the depth buffer to complete the position
 
@@ -98,10 +95,9 @@ void main()
 
 	vec4 normal_view = texture(uImage05, screenSpaceCoord.xy); //pull normals from texture
 	normal_view = (normal_view - 0.5) * 2.0; //restore from color(0,1) to normal (-1,1) range
-	//normal_view = vec4(1,1,1,1);
 
-	vec4 diffuse;// = vec4(0.0);
-	vec4 specular;// = vec4(0.0);
+	vec4 diffuse; //output for calcPhongPoint
+	vec4 specular; //output for calcPhongPoint
 
 	//CommonUtil Phong Function 
 	calcPhongPoint(diffuse, specular, //Output results into diffuse, specular

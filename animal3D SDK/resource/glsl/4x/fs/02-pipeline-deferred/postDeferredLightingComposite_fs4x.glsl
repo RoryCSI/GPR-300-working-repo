@@ -26,7 +26,7 @@
 
 #version 450
 
-// ****TO-DO:
+// ****Done:
 //	-> declare samplers containing results of light pre-pass
 //	-> declare samplers for texcoords, diffuse and specular maps
 //	-> implement Phong sum with samples from the above
@@ -51,10 +51,6 @@ void main()
 	
 	vec4 sceneTexcoord = texture(uImage04, vTexcoord_atlas.xy);
 
-	//vec4 scenePosition = vec4(texture(uImage04, vTexcoord_atlas.xy).xy, texture(uImage07, vTexcoord_atlas.xy).z, 1.0);
-
-	//vec4 normal = texture(uImage05, vTexcoord_atlas.xy);
-
 	vec4 diffuseColor = texture(uImage00, sceneTexcoord.xy);
 	vec4 specularColor = texture(uImage01, sceneTexcoord.xy);
 
@@ -63,7 +59,6 @@ void main()
 
 	//(diffuse light)(diffuse color) + (specular light)(specular color) + (dim ambient constant color).
 	rtFragColor = (diffuseColor * rtDiffuseLight) + (specularColor * rtSpecularLight) + vec4(0.1,0.1,0.1,1.0) ;
-	//rtFragColor = diffuseColor * rtDiffuseLight;
-	//rtFragColor = rtDiffuseLight;
+
 	rtFragColor.a = diffuseColor.a;
 }

@@ -50,8 +50,7 @@ void a3ssfx_update_graphics(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode
 	// upload
 	a3bufferRefillOffset(demoState->ubo_transform, 0, 0, sizeof(demoMode->modelMatrixStack), demoMode->modelMatrixStack);
 	a3bufferRefillOffset(demoState->ubo_light, 0, 0, sizeof(demoMode->pointLightData), demoMode->pointLightData);
-	a3bufferRefillOffset(demoState->ubo_mvp, 0, 0, sizeof(demoMode->projectorMatrixStack), demoMode->projectorMatrixStack);
-	//a3bufferRefillOffset(demoState->ubo_mvp, 0, 0, sizeof(demoMode->pointLightMVP), demoMode->pointLightMVP);
+	a3bufferRefillOffset(demoState->ubo_mvp, 0, 0, sizeof(demoMode->pointLightMVP), demoMode->pointLightMVP);
 }
 
 void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a3f64 const dt)
@@ -117,42 +116,42 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 	a3demo_updateSceneObject(demoMode->obj_ground, 0);
 	a3demo_updateSceneObjectStack(demoMode->obj_ground, projector);
 
-	// update light positions and transforms
+	//For every light
 	for (i = 0, pointLightData = demoMode->pointLightData;
 		i < ssfxMaxCount_pointLight;
 		++i, ++pointLightData)
 	{
-		if (pointLightData->worldPos.x >= 10.0f)
+		if (pointLightData->worldPos.x >= 10.0f) //If at right bound
 		{
-			demoMode->lightTargetPos[i].z = a3randomRange(4.0f, 7.9f);
+			demoMode->lightTargetPos[i].z = a3randomRange(4.0f, 7.9f); //Set to top layer
 		}
-		else if (pointLightData->worldPos.x <= -10.0f)
+		else if (pointLightData->worldPos.x <= -10.0f) //If at left bound
 		{
-			demoMode->lightTargetPos[i].z = a3randomRange(0.0f, 3.9f);
+			demoMode->lightTargetPos[i].z = a3randomRange(0.0f, 3.9f); //Set to bottom layer
 		}
-		if (demoMode->lightTargetPos[i].z < 4.0f)
+		if (demoMode->lightTargetPos[i].z < 4.0f) //If in bottom layer
 		{
+			//flutter right
 			a3vec4 newTargetPos = {pointLightData->worldPos.x + a3randomRange(0.1f, 0.2f),
 								pointLightData->worldPos.y + a3randomRange(-0.2f, 0.2f),
 								demoMode->lightTargetPos[i].z,
 								1};
 			demoMode->lightTargetPos[i] = newTargetPos;
 		}
-		else if (demoMode->lightTargetPos[i].z < 8.0f)
+		else if (demoMode->lightTargetPos[i].z < 8.0f)//If in top layer
 		{
+			//flutter left
 			a3vec4 newTargetPos = {pointLightData->worldPos.x + a3randomRange(-0.1f, -0.2f),
 								pointLightData->worldPos.y + a3randomRange(-0.2f, 0.2f),
 								demoMode->lightTargetPos[i].z,
 								1};
 			demoMode->lightTargetPos[i] = newTargetPos;
 		}
-		
-
-		//a3real4Lerp(pointLightData->worldPos.v, &pointLightData->worldPos.p, &demoMode->lightTargetPos[i].p, demoState->t_timer);
-		//a3vec4 newWorldPos = {(demoMode->lightTargetPos[i].v - pointLightData->worldPos.v) * a3real_sixth};
+		//make a3vec to set worldpos
 		a3vec4 newWorldPos = demoMode->lightTargetPos[i];
 		pointLightData->worldPos = newWorldPos;
 	}
+	// update light positions and transforms
 	for (i = 0, pointLightData = demoMode->pointLightData, pointLightMVP = demoMode->pointLightMVP;
 		i < ssfxMaxCount_pointLight;
 		++i, ++pointLightData, ++pointLightMVP)
@@ -161,7 +160,7 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 			projector->sceneObjectPtr->modelMatrixStackPtr->modelMatInverse.m,
 			pointLightData->worldPos.v);
 
-		// ****TO-DO:
+		// ****Done:
 		//	-> calculate light transformation
 		//		(hint: in the previous line, we calculate the view-space position)
 		//		(hint: determine the scale part, append position and multiply by 
@@ -172,6 +171,7 @@ void a3ssfx_update_scene(a3_DemoState* demoState, a3_DemoMode2_SSFX* demoMode, a
 						0, 0, pointLightData->radius, pointLightData->position.z,
 						0, 0, 0, 1};
 
+		//update pointLightMVP
 		a3real4x4Product(pointLightMVP->m, projector->projectorMatrixStackPtr->projectionMat.m, posAndScale.m);
 	}
 }

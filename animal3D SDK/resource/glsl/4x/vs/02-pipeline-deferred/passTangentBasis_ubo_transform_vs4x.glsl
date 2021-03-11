@@ -28,7 +28,7 @@
 
 #define MAX_OBJECTS 128
 
-// ****TO-DO:
+// ****Done:
 //	-> declare attributes related to lighting
 //		(hint: normal [2], texcoord [8], tangent [10], bitangent [11])
 //	-> declare view-space varyings related to lighting
@@ -92,19 +92,13 @@ void main()
 	vPosition = uModelMatrixStack[uIndex].modelViewMat * aPosition;
 	vNormal = uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aNormal, 0.0); //w should be zero since no scaling.
 	vTexcoord = uModelMatrixStack[uIndex].atlasMat * aTexcoord; //From whole atlas to cell space
-
+	
+	//Calculate tangent, bitangent, normal matrix for converting tangent normal to view space in fragment shader
 	vTangent = normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aTangent, 0.0)));
 	vBiTangent = normalize(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * aBiTangent);
-
-	//Calculate tangent, bitangent, normal matrix for converting tangent normal to view space in fragment shader
 	vTBN = mat3(normalize(vTangent), 
 				normalize(vec3(vBiTangent)), 
 				normalize(vNormal));
-
-//	vTBN = mat3(normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * vec4(aTangent, 0.0))), 
-//				normalize(vec3(uModelMatrixStack[uIndex].modelViewMatInverseTranspose * aBiTangent)), 
-//				normalize(vec3(vNormal)));
-
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;

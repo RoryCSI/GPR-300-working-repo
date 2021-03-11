@@ -26,7 +26,7 @@
 
 #define MAX_LIGHTS 1024
 
-// ****TO-DO:
+// ****Done:
 //	-> declare view-space varyings from vertex shader
 //	-> declare point light data structure and uniform block
 //	-> declare uniform samplers (diffuse, specular & normal maps)
@@ -59,9 +59,6 @@ layout (location = 2) out vec4 rtDiffuse;
 layout (location = 3) out vec4 rtSpecular;
 
 uniform int uCount;
-
-// location of viewer in its own space is the origin
-const vec4 kEyePos_view = vec4(0.0, 0.0, 0.0, 1.0);
 
 //View-space varyings
 in vec4 vPosition;
@@ -103,6 +100,7 @@ void main()
 	vec4 finalDiffuse = vec4(0.0);
 	vec4 finalSpecular = vec4(0.0);
 
+	//To output particular buffers for demo
 	vec4 diffuse = vec4(0.0);
 	vec4 specular = vec4(0.0);
 

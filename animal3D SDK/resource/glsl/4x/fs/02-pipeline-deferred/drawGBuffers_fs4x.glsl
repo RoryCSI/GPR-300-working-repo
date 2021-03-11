@@ -26,7 +26,7 @@
 
 #version 450
 
-// ****TO-DO:
+// ****Done:
 //	-> declare view-space varyings from vertex shader
 //	-> declare MRT for pertinent surface data (incoming attribute info)
 //		(hint: at least normal and texcoord are needed)
@@ -43,8 +43,6 @@ in mat3 vTBN;
 
 in vec4 vPosition_screen;
 
-
-//layout (location = 0) out vec4 rtFragColor;
 layout (location = 0) out vec4 rtTexcoord;
 layout (location = 1) out vec4 rtNormal;
 layout (location = 3) out vec4 rtPosition;
