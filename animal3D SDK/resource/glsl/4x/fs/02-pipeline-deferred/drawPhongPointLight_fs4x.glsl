@@ -66,7 +66,7 @@ in vec4 vBiasedClipPosition;
 
 uniform sampler2D uImage00; //Diffuse atlas
 uniform sampler2D uImage01; //Specular atlas
-
+uniform sampler2D uImage02;
 uniform sampler2D uImage04; //Scene texcoord
 uniform sampler2D uImage05; //Scene normal
 uniform sampler2D uImage07; //Scene depth
@@ -79,33 +79,37 @@ void calcPhongPoint(
 
 uniform mat4 uPB_inv;
 
+
 void main()
 {
-	vec4 screenCoord = vBiasedClipPosition/ vBiasedClipPosition.w;
+	vec4 screenSpaceCoord =  vBiasedClipPosition / vBiasedClipPosition.w;
 
-	vec4 diffuseSample = texture(uImage00, screenCoord.xy); //Grab diffuse color using just calculated sceneTexcoord
-	vec4 specularSample = texture(uImage01, screenCoord.xy); //Grab specular color using just calculated sceneTexcoord
+	//vec4 sceneTexcoord = texture(uImage04, screenSpaceCoord.xy);
+
+	vec4 diffuseSample = texture(uImage00, screenSpaceCoord.xy); //Grab diffuse color using just calculated sceneTexcoord
+	vec4 specularSample = texture(uImage01, screenSpaceCoord.xy); //Grab specular color using just calculated sceneTexcoord
 
 	//rebuilding screen position to avoid precision loss
-	vec4 position_screen = screenCoord; //get texture xy
-	position_screen.z = texture(uImage07, screenCoord.xy).r; //fill in z from the depth buffer to complete the position
-	
+	vec4 position_screen = screenSpaceCoord; //get texture xy
+	position_screen.z = texture(uImage07, screenSpaceCoord.xy).r; //fill in z from the depth buffer to complete the position
+
 	vec4 position_view = uPB_inv * position_screen; //undo bias projection
 	position_view /= position_view.w; //perspective divide - still division
 
-	vec4 normal_view = texture(uImage05, screenCoord.xy); //pull normals from texture
+	vec4 normal_view = texture(uImage05, screenSpaceCoord.xy); //pull normals from texture
 	normal_view = (normal_view - 0.5) * 2.0; //restore from color(0,1) to normal (-1,1) range
+	//normal_view = vec4(1,1,1,1);
 
-	vec4 diffuse = vec4(0.0);
-	vec4 specular = vec4(0.0);
+	vec4 diffuse;// = vec4(0.0);
+	vec4 specular;// = vec4(0.0);
 
 	//CommonUtil Phong Function 
 	calcPhongPoint(diffuse, specular, //Output results into diffuse, specular
-	-normalize(position_view), position_view, normal_view, diffuseSample,//eyeVec, fragPos, fragNrm, fragColor
+	normalize(uPointLightData[vInstanceID].position - position_view), position_view, normal_view, diffuseSample,//eyeVec, fragPos, fragNrm, fragColor
 	uPointLightData[vInstanceID].position, //light pos,
 	vec4(uPointLightData[vInstanceID].radius, uPointLightData[vInstanceID].radiusSq, uPointLightData[vInstanceID].radiusInv, uPointLightData[vInstanceID].radiusInvSq),//light radius
 	uPointLightData[vInstanceID].color);//light color
-
+	
 	rtDiffuseLight = diffuse;
 	rtSpecularLight = specular;
 

@@ -50,7 +50,6 @@ layout (location = 1) out vec4 rtNormal;
 layout (location = 3) out vec4 rtPosition;
 
 uniform sampler2D uTex_nm;
-uniform sampler2D uImage05;
 
 void main()
 {

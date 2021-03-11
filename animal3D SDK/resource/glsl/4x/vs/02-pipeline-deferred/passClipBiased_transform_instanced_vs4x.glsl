@@ -35,7 +35,7 @@
 //	-> calculate and copy biased clip to varying
 //		(hint: bias matrix is provided as a constant)
 
-uniform ubMVP
+uniform ubTransformMVP
 {
 	mat4 lightMVP[MAX_INSTANCES];
 };
@@ -57,9 +57,9 @@ const mat4 bias = mat4(
 
 void main()
 {
-	gl_Position = lightMVP[vInstanceID] * aPosition;
+	gl_Position = lightMVP[gl_InstanceID] * aPosition;
 
-	vBiasedClipPosition = bias * lightMVP[vInstanceID] * aPosition;
+	vBiasedClipPosition = bias * lightMVP[gl_InstanceID] * aPosition;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;

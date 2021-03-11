@@ -65,5 +65,5 @@ void main()
 	rtFragColor = (diffuseColor * rtDiffuseLight) + (specularColor * rtSpecularLight) + vec4(0.1,0.1,0.1,1.0) ;
 	//rtFragColor = diffuseColor * rtDiffuseLight;
 	//rtFragColor = rtDiffuseLight;
-	rtFragColor.a = 1.0;
+	rtFragColor.a = diffuseColor.a;
 }
