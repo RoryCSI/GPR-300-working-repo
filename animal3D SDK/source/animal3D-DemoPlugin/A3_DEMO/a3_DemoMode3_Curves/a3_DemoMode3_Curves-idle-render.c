@@ -118,7 +118,7 @@ a3ret a3vertexDrawableRenderIsoPatches(a3ui32 const count)
 		//	-> invoke rendering enough vertices to cover all path segments
 		// force isoline patches
 		float defaultTessLevelsOuter[4] = {1.0f, 1.0f, 1.0f, 1.0f}, defaultTessLevelsInner[2] = {1.0f, 1.0f,};
-		glPatchParamteri(GL_PATCH_VERTICES, 2);
+		glPatchParameteri(GL_PATCH_VERTICES, 2);
 		glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, defaultTessLevelsOuter);
 		glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, defaultTessLevelsInner);
 		glBindVertexArray(0);
