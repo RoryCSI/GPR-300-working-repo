@@ -53,13 +53,55 @@ void a3curves_update_animation(a3_DemoState* demoState, a3_DemoMode3_Curves* dem
 	{
 		a3_SceneObjectData* sceneObjectData = demoMode->obj_teapot->dataPtr;
 
-		// ****TO-DO: 
+		// ****Done: 
 		//	-> interpolate teapot's position using algorithm that matches path drawn
 		//		(hint: use the one that looks the best)
 		//	-> update the animation timer
 		//		(hint: check if we've surpassed the segment's duration)
 		// teapot follows curved path
 
+		demoMode->curveSegmentTime += (a3f32)dt; // Update current segment time
+
+		//Iterate to next segment when current segment time finishes, starting back from zero once the end is reached.
+		if (demoMode->curveSegmentTime > demoMode->curveSegmentDuration) // Current Segment ended
+		{
+			demoMode->curveSegmentIndex++; // Move to next segment
+			if (demoMode->curveSegmentIndex >= demoMode->curveWaypointCount) // Reset to 0 to restart loop
+			{
+				demoMode->curveSegmentIndex = 0;
+			}
+
+			demoMode->curveSegmentTime -= demoMode->curveSegmentDuration; // Reset current segment Timer
+		}
+
+		//Set-up waypoint values for CatmullRom, looping waypoints from end to beginning
+		int vPrev = demoMode->curveSegmentIndex - 1; // Previous seg waypoint			  // -1
+		unsigned int v0 = demoMode->curveSegmentIndex; // Current seg start	waypoint	  // +0
+		unsigned int v1 = demoMode->curveSegmentIndex + 1; // Current seg end waypoint	  // +1
+		unsigned int vNext = demoMode->curveSegmentIndex + 2; // Next seg waypoint		  // +2
+		if (vPrev < 0); // Set -1 index to last waypoint index to loop waypoints
+		{
+			vPrev = demoMode->curveWaypointCount -1;
+		}
+		if (vNext > demoMode->curveWaypointCount - 1)// Set vNext back to 0 if it escapes the bounds, preserve loop
+		{
+			vNext = 0;
+		}
+		if (v1 > demoMode->curveWaypointCount - 1)// Set v1 and Vnext back to 0 and 1 if they escapes the bounds, preserving the loop
+		{
+			v1 = 0;
+			vNext = 1;
+		}
+
+		demoMode->curveSegmentParam = demoMode->curveSegmentTime * demoMode->curveSegmentDurationInv; //Calculate interp parameter (0 to 1)
+
+		// Interpolation calculation using the above data
+		a3real4CatmullRom(sceneObjectData->position.v,
+				demoMode->curveWaypoint[vPrev].v,
+				demoMode->curveWaypoint[v0].v,
+				demoMode->curveWaypoint[v1].v,
+				demoMode->curveWaypoint[vNext].v,
+				demoMode->curveSegmentParam);
 	}
 }
 
