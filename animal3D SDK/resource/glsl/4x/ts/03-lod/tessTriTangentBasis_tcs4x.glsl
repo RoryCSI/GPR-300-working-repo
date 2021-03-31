@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****Done: 
 //	-> declare inbound and outbound varyings to pass along vertex data
 //		(hint: inbound matches VS naming but is now an array)
 //		(hint: outbound matches TES naming and is also an array)
@@ -35,10 +35,31 @@
 
 layout (vertices = 3) out;
 
+//Vertex -> *Tess Control* -> Tess Eval -> Fragment
+in vbVertexData {
+	mat4 vTangentBasis_view;
+	vec4 vTexcoord_atlas;
+} vVertexData[];
+
+//Vertex -> *Tess Control* -> Tess Eval -> Fragment
+out vbVertexData {
+	mat4 vTangentBasis_view;
+	vec4 vTexcoord_atlas;
+} vVertexData_tess[];
+
+
 uniform vec3 uLevelOuter;
 uniform float uLevelInner;
 
 void main()
 {
-	
+	//Pass on vertexData
+	vVertexData_tess[gl_InvocationID].vTangentBasis_view = vVertexData[gl_InvocationID].vTangentBasis_view;
+	vVertexData_tess[gl_InvocationID].vTexcoord_atlas = vVertexData[gl_InvocationID].vTexcoord_atlas;
+
+	//set tesselation levels
+	gl_TessLevelOuter[0] = uLevelOuter[0];
+	gl_TessLevelOuter[0] = uLevelOuter[1];
+	gl_TessLevelOuter[0] = uLevelOuter[2];
+	gl_TessLevelInner[0] = uLevelInner;
 }
