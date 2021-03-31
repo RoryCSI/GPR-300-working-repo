@@ -75,23 +75,10 @@ void a3curves_update_animation(a3_DemoState* demoState, a3_DemoMode3_Curves* dem
 		}
 
 		//Set-up waypoint values for CatmullRom, looping waypoints from end to beginning
-		int vPrev = demoMode->curveSegmentIndex - 1; // Previous seg waypoint			  // -1
-		unsigned int v0 = demoMode->curveSegmentIndex; // Current seg start	waypoint	  // +0
-		unsigned int v1 = demoMode->curveSegmentIndex + 1; // Current seg end waypoint	  // +1
-		unsigned int vNext = demoMode->curveSegmentIndex + 2; // Next seg waypoint		  // +2
-		if (vPrev < 0); // Set -1 index to last waypoint index to loop waypoints
-		{
-			vPrev = demoMode->curveWaypointCount -1;
-		}
-		if (vNext > demoMode->curveWaypointCount - 1)// Set vNext back to 0 if it escapes the bounds, preserve loop
-		{
-			vNext = 0;
-		}
-		if (v1 > demoMode->curveWaypointCount - 1)// Set v1 and Vnext back to 0 and 1 if they escapes the bounds, preserving the loop
-		{
-			v1 = 0;
-			vNext = 1;
-		}
+		unsigned v0 = demoMode->curveSegmentIndex; // index for current waypoint
+		unsigned int vPrev = (v0 + demoMode->curveWaypointCount - 1) % demoMode->curveWaypointCount; // index for previous waypoint
+		unsigned int v1 = (v0 + 1) % demoMode->curveWaypointCount; // index for next waypoint
+		unsigned int vNext = (v0 + 2) % demoMode->curveWaypointCount; // index for next-next waypoint
 
 		demoMode->curveSegmentParam = demoMode->curveSegmentTime * demoMode->curveSegmentDurationInv; //Calculate interp parameter (0 to 1)
 
