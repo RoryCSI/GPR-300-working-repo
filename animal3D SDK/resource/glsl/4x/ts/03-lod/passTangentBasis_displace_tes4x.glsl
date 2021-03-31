@@ -35,7 +35,20 @@
 
 layout (triangles, equal_spacing) in;
 
+//Vertex -> Tess Control -> *Tess Eval* -> Fragment
+in vbVertexData {
+	mat4 vTangentBasis_view;
+	vec4 vTexcoord_atlas;
+} vVertexData_tess[];
+
+out vbVertexData {
+	mat4 vTangentBasis_view;
+	vec4 vTexcoord_atlas;
+} vVertexData[];
+
 void main()
 {
-	
+	//Pass on vertexData
+	vVertexData[gl_PrimitiveID].vTangentBasis_view = vVertexData_tess[gl_PrimitiveID].vTangentBasis_view;
+	vVertexData[gl_PrimitiveID].vTexcoord_atlas = vVertexData_tess[gl_PrimitiveID].vTexcoord_atlas;
 }
