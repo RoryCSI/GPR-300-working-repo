@@ -146,7 +146,7 @@ a3ret a3vertexDrawableRenderTriPatches(a3_VertexDrawable const* drawable)
 		glBindVertexArray(drawable->vertexArray->handle->handle);
 		if (drawable->indexType)
 		{
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawable->indexBuffer->handle->handle);
 			glDrawElements(GL_PATCHES, drawable->count, drawable->indexType, drawable->indexing);
 		}
 		else
