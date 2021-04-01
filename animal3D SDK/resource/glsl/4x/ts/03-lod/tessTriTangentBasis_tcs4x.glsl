@@ -53,13 +53,17 @@ uniform float uLevelInner;
 
 void main()
 {
+
 	//Pass on vertexData
 	vVertexData_tess[gl_InvocationID].vTangentBasis_view = vVertexData[gl_InvocationID].vTangentBasis_view;
 	vVertexData_tess[gl_InvocationID].vTexcoord_atlas = vVertexData[gl_InvocationID].vTexcoord_atlas;
 
+	//output
+	gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+
 	//set tesselation levels
 	gl_TessLevelOuter[0] = uLevelOuter[0];
-	gl_TessLevelOuter[0] = uLevelOuter[1];
-	gl_TessLevelOuter[0] = uLevelOuter[2];
+	gl_TessLevelOuter[1] = uLevelOuter[1];
+	gl_TessLevelOuter[2] = uLevelOuter[2];
 	gl_TessLevelInner[0] = uLevelInner;
 }

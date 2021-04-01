@@ -44,11 +44,64 @@ in vbVertexData {
 out vbVertexData {
 	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
-} vVertexData[];
+} vVertexData;
+
+uniform sampler2D uTex_hm;
 
 void main()
 {
 	//Pass on vertexData
-	vVertexData[gl_PrimitiveID].vTangentBasis_view = vVertexData_tess[gl_PrimitiveID].vTangentBasis_view;
-	vVertexData[gl_PrimitiveID].vTexcoord_atlas = vVertexData_tess[gl_PrimitiveID].vTexcoord_atlas;
+	//vVertexData.vTangentBasis_view = vVertexData_tess[gl_PrimitiveID].vTangentBasis_view;
+	//vVertexData.vTexcoord_atlas = vVertexData_tess[gl_PrimitiveID].vTexcoord_atlas;
+
+	//pass through/dummy output;
+	/*
+	gl_Position = (gl_TessCoord.x * gl_in[0].gl_Position +
+				   gl_TessCoord.y * gl_in[1].gl_Position +
+				   gl_TessCoord.z * gl_in[2].gl_Position);
+	*/
+
+	// get weighted sum position of three input coordinates
+	vec4 p0 = gl_TessCoord.x * gl_in[0].gl_Position;
+    vec4 p1 = gl_TessCoord.y * gl_in[1].gl_Position;
+    vec4 p2 = gl_TessCoord.z * gl_in[2].gl_Position;
+    vec4 pos = p0 + p1 + p2;
+
+	// get weighted sum of tangent
+	vec4 tan0 = gl_TessCoord.x * vVertexData_tess[0].vTangentBasis_view[0];
+    vec4 tan1 = gl_TessCoord.y * vVertexData_tess[1].vTangentBasis_view[0];
+    vec4 tan2 = gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view[0];
+    vec4 tangent = normalize(tan0 + tan1 + tan2);
+
+	// get weighted sum of bitangent
+	vec4 bit0 = gl_TessCoord.x * vVertexData_tess[0].vTangentBasis_view[1];
+    vec4 bit1 = gl_TessCoord.y * vVertexData_tess[1].vTangentBasis_view[1];
+    vec4 bit2 = gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view[1];
+    vec4 bitangent = normalize(bit0 + bit1 + bit2);
+
+	// get weighted sum of normal
+	vec4 nrm0 = gl_TessCoord.x * vVertexData_tess[0].vTangentBasis_view[2];
+    vec4 nrm1 = gl_TessCoord.y * vVertexData_tess[1].vTangentBasis_view[2];
+    vec4 nrm2 = gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view[2];
+    vec4 normal = normalize(nrm0 + nrm1 + nrm2);
+
+	// get weighted sum of pos_view - might not make mathematical sense
+	vec4 pos_view0 = gl_TessCoord.x * vVertexData_tess[0].vTangentBasis_view[3];
+    vec4 pos_view1 = gl_TessCoord.y * vVertexData_tess[1].vTangentBasis_view[3];
+    vec4 pos_view2 = gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view[3];
+    vec4 pos_view = normalize(pos_view0 + pos_view1 + pos_view2);
+
+	// get weighted sum of texcoord
+    vec4 tc0 = gl_TessCoord.x * vVertexData_tess[0].vTexcoord_atlas;
+    vec4 tc1 = gl_TessCoord.y * vVertexData_tess[1].vTexcoord_atlas;
+    vec4 tc2 = gl_TessCoord.z * vVertexData_tess[2].vTexcoord_atlas;
+    vec4 tessTexCoord = tc0 + tc1 + tc2;
+
+    float height = texture(uTex_hm, tessTexCoord.xy).r;
+    pos += normal * (height * 0.3f);
+
+	vVertexData.vTangentBasis_view = mat4(tangent,bitangent,normal,pos_view);
+	vVertexData.vTexcoord_atlas = tessTexCoord;
+
+	gl_Position = pos;   
 }
