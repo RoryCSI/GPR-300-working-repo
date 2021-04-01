@@ -45,6 +45,9 @@ layout (triangles) in;
 
 layout (line_strip, max_vertices = MAX_VERTICES) out;
 
+uniform int uFlag;
+uniform float uSize;
+
 in vbVertexData {
 	mat4 vTangentBasis_view;
 	vec4 vTexcoord_atlas;
@@ -76,7 +79,51 @@ void drawWireframe()
 	EmitVertex();
 	EndPrimitive();
 }
+
+void drawVertexTangent()
+{
+	vec4 tan_view;
+	vec4 bit_view;
+	vec4 nrm_view;
+
+	vColor = vec4(0.0,1.0,0.0,1.0);
+	tan_view = normalize(vVertexData[0].vTangentBasis_view[0]);
+	gl_Position = gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = gl_in[0].gl_Position + tan_view;
+	EmitVertex();
+	EndPrimitive();
+
+	vColor = vec4(1.0,0.0,0.0,1.0);
+	bit_view = normalize(vVertexData[0].vTangentBasis_view[1]);
+	gl_Position = gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = gl_in[0].gl_Position + bit_view;
+	EmitVertex();
+	EndPrimitive();
+
+	vColor = vec4(0.0,0.0,1.0,1.0);
+	nrm_view = normalize(vVertexData[0].vTangentBasis_view[2]);
+	gl_Position = gl_in[0].gl_Position;
+	EmitVertex();
+	gl_Position = gl_in[0].gl_Position + nrm_view;
+	EmitVertex();
+	EndPrimitive();
+
+
+}
 void main()
 {
-	drawWireframe();
+	if (uFlag % 4 == 0)
+	{
+		drawWireframe();
+	}
+	if (uFlag % 3 == 0)
+	{
+		drawVertexTangent();
+	}
+	//if (uFlag == 3)
+	//{
+	//}
+	
 }
