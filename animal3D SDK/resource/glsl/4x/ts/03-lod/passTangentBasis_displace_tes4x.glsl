@@ -63,6 +63,11 @@ void main()
 				   gl_TessCoord.z * gl_in[2].gl_Position);
 	*/
 
+
+	//References	- https://stackoverflow.com/questions/24166446/glsl-tessellation-displacement-mapping
+	//				- Blue book
+	//				- http://ogldev.atspace.co.uk/www/tutorial30/tutorial30.html
+	//				- https://web.engr.oregonstate.edu/~mjb/cs519/Handouts/tessellation.1pp.pdf
 	// get weighted sum position of three input coordinates
 	vec4 p0 = gl_TessCoord.x * gl_in[0].gl_Position;
     vec4 p1 = gl_TessCoord.y * gl_in[1].gl_Position;
