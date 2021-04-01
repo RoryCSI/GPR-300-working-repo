@@ -57,7 +57,7 @@ void main()
 	int vPrev = (v0 + uCount - 1) % uCount; // index for previous waypoint
 	int v1 = (v0 + 1) % uCount; // index for next waypoint
 	int vNext = (v0 + 2) % uCount; // index for next-next waypoint
-	float u = gl_TessCoord[0]; //hold interpolation parameter
+	float u = gl_TessCoord[0]; //grab interpolation parameter
 	
 	//interpolate but not *splinely*
 	//vec4 p = mix(uCurveWaypoint[v0],
@@ -90,5 +90,6 @@ void main()
 
 	gl_Position = uP * p;
 
+	//fun color yayay
 	vColor = vec4(0.5, 1.0 - u, u, 1.0);
 }

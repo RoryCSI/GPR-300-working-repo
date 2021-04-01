@@ -106,7 +106,7 @@ vec3 calcParallaxCoord(in vec3 coord, in vec3 viewVec, const int steps)
 	
 	//References - https://learnopengl.com/Advanced-Lighting/Parallax-Mapping
 	//			 - https://www.gamedev.net/tutorials/programming/graphics/a-closer-look-at-parallax-occlusion-mapping-r3262/
-	//		     - NM, POM presentation in Canvas
+	//		     - "nm pom" presentation in Canvas
 
 	//setup step values
 	float dt = 1.0/steps; // size of each step
@@ -161,6 +161,7 @@ void main()
 	//		an efficient way of representing the required matrix operation)
 	// tangent-space view vector
 	vec3 viewVec_tan = vec3( 0.0, 0.0, 0.0 );
+
 	//convert viewVec to tangent space - .xyz and right to left order important!
 	viewVec_tan = transpose(mat3(tan_view.xyz,
 							     bit_view.xyz,

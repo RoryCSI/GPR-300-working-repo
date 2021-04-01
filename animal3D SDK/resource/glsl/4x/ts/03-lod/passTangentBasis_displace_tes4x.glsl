@@ -24,7 +24,7 @@
 
 #version 450
 
-// ****TO-DO: 
+// ****Done: 
 //	-> declare inbound and outbound varyings to pass along vertex data
 //		(hint: inbound matches TCS naming and is still an array)
 //		(hint: outbound matches GS/FS naming and is singular)
@@ -91,17 +91,20 @@ void main()
     vec4 pos_view2 = gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view[3];
     vec4 pos_view = normalize(pos_view0 + pos_view1 + pos_view2);
 
-	// get weighted sum of texcoord
+	// get weighted sum of texcoord to pass on
     vec4 tc0 = gl_TessCoord.x * vVertexData_tess[0].vTexcoord_atlas;
     vec4 tc1 = gl_TessCoord.y * vVertexData_tess[1].vTexcoord_atlas;
     vec4 tc2 = gl_TessCoord.z * vVertexData_tess[2].vTexcoord_atlas;
     vec4 tessTexCoord = tc0 + tc1 + tc2;
 
+	//calculate pos displacement
     float height = texture(uTex_hm, tessTexCoord.xy).r;
     pos += normal * (height * 0.3f);
 
+	//Pass data
 	vVertexData.vTangentBasis_view = mat4(tangent,bitangent,normal,pos_view);
 	vVertexData.vTexcoord_atlas = tessTexCoord;
 
+	//output
 	gl_Position = pos;   
 }

@@ -58,14 +58,15 @@ out vec4 vColor;
 
 void drawWireframe()
 {
+	//Line segment from 0 to 1 in yellow
 	vColor = vec4(1.0,1.0,0.0,1.0);
-
 	gl_Position = gl_in[0].gl_Position;
 	EmitVertex();
 	gl_Position = gl_in[1].gl_Position;
 	EmitVertex();
 	EndPrimitive();
 
+	//Line segment from 1 to 2 in magenta
 	vColor = vec4(1.0,0.0,1.0,1.0);
 	gl_Position = gl_in[1].gl_Position;
 	EmitVertex();
@@ -73,6 +74,7 @@ void drawWireframe()
 	EmitVertex();
 	EndPrimitive();
 
+	//Line segment from 2 to 0 in yellow, completing loop
 	vColor = vec4(1.0,1.0,0.0,1.0);
 	gl_Position = gl_in[2].gl_Position;
 	EmitVertex();
@@ -83,10 +85,12 @@ void drawWireframe()
 
 void drawVertexTangent()
 {
+	//declarations
 	vec4 tan_view;
 	vec4 bit_view;
 	vec4 nrm_view;
 
+	//Color red, draw line from vertex position to position at end of tan vector, multiply uSize and uP to shrink and convert to clip
 	vColor = vec4(1.0,0.0,0.0,1.0);
 	tan_view = normalize(vVertexData[0].vTangentBasis_view[0]);
 	gl_Position = gl_in[0].gl_Position;
@@ -95,6 +99,7 @@ void drawVertexTangent()
 	EmitVertex();
 	EndPrimitive();
 
+	//Color green, draw line from vertex position to position at end of tan vector, multiply uSize and uP to shrink and convert to clip
 	vColor = vec4(0.0,1.0,0.0,1.0);
 	bit_view = normalize(vVertexData[0].vTangentBasis_view[1]);
 	gl_Position = gl_in[0].gl_Position;
@@ -103,6 +108,7 @@ void drawVertexTangent()
 	EmitVertex();
 	EndPrimitive();
 
+	//Color blue, draw line from vertex position to position at end of tan vector, multiply uSize and uP to shrink and convert to clip
 	vColor = vec4(0.0,0.0,1.0,1.0);
 	nrm_view = normalize(vVertexData[0].vTangentBasis_view[2]);
 	gl_Position = gl_in[0].gl_Position;
@@ -113,11 +119,15 @@ void drawVertexTangent()
 }
 void drawFaceTangent()
 {
+	//Declarations
 	vec4 tan_view;
 	vec4 bit_view;
 	vec4 nrm_view;
+
+	//Calculate center of triangle
 	vec4 faceCenterPos = (gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position)/3;
 
+	//Color red, draw line from center face position to position at end of tan vector, multiply uSize and uP to shrink and convert to clip
 	vColor = vec4(1.0,0.0,0.0,1.0);
 	tan_view = normalize(vVertexData[0].vTangentBasis_view[0]);
 	gl_Position = faceCenterPos;
@@ -126,6 +136,7 @@ void drawFaceTangent()
 	EmitVertex();
 	EndPrimitive();
 
+	//Color green, draw line from center face position to position at end of tan vector, multiply uSize and uP to shrink and convert to clip
 	vColor = vec4(0.0,1.0,0.0,1.0);
 	bit_view = normalize(vVertexData[0].vTangentBasis_view[1]);
 	gl_Position = faceCenterPos;
@@ -134,15 +145,16 @@ void drawFaceTangent()
 	EmitVertex();
 	EndPrimitive();
 
+	//Color blue, draw line from center face position to position at end of tan vector, multiply uSize and uP to shrink and convert to clip
 	vColor = vec4(0.0,0.0,1.0,1.0);
 	nrm_view = normalize(vVertexData[0].vTangentBasis_view[2]);
-	//nrm_view = vec4(cross(gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz, gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz),1);
 	gl_Position = faceCenterPos;
 	EmitVertex();
 	gl_Position = faceCenterPos + uSize * uP * nrm_view;
 	EmitVertex();
 	EndPrimitive();
 
+	//Color red, draw line from center face position to position at end of tan vector, multiply uSize and uP to shrink and convert to clip
 	vColor = vec4(1.0,0.0,0.0,1.0);
 	tan_view = normalize(vVertexData[1].vTangentBasis_view[0]);
 	gl_Position = faceCenterPos;
@@ -151,6 +163,7 @@ void drawFaceTangent()
 	EmitVertex();
 	EndPrimitive();
 
+	//Color green, draw line from center face position to position at end of tan vector, multiply uSize and uP to shrink and convert to clip
 	vColor = vec4(0.0,1.0,0.0,1.0);
 	bit_view = normalize(vVertexData[2].vTangentBasis_view[1]);
 	gl_Position = faceCenterPos;
@@ -161,15 +174,19 @@ void drawFaceTangent()
 }
 void main()
 {
+	//There's a cleverer way to math this, given the way uFlag is setup
+	//uFlag is n * 4 for wireframe
 	if (uFlag % 4 == 0)
 	{
 		drawWireframe();
 	}
+	//uFlag is n * 3 for tangent
 	if (uFlag % 3 == 0)
 	{
 		drawFaceTangent();
 		drawVertexTangent();
 	}
+	//uFlag must be both tangent and wireframe
 	if (uFlag >= 7)
 	{
 		drawWireframe();

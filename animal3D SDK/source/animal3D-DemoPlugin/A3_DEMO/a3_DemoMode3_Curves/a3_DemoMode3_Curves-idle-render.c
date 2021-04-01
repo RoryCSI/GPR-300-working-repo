@@ -117,13 +117,19 @@ a3ret a3vertexDrawableRenderIsoPatches(a3ui32 const count)
 		//	-> disable anything that would result in a VAO, VBO and/or IBO based render
 		//	-> invoke rendering enough vertices to cover all path segments
 		// force isoline patches
+
+		//-> set patch vertices parameter for isolines
 		float defaultTessLevelsOuter[4] = {1.0f, 1.0f, 1.0f, 1.0f}, defaultTessLevelsInner[2] = {1.0f, 1.0f,};
 		glPatchParameteri(GL_PATCH_VERTICES, 2);
 		glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, defaultTessLevelsOuter);
 		glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, defaultTessLevelsInner);
+		
+		//-> disable anything that would result in a VAO, VBO and/or IBO based render
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		//-> invoke rendering enough vertices to cover all path segments
 		glDrawArrays(GL_PATCHES, 0, count * 2);
 		return 1;
 	}
@@ -142,7 +148,12 @@ a3ret a3vertexDrawableRenderTriPatches(a3_VertexDrawable const* drawable)
 		//	-> copy regular rendering algorithm
 		//	-> replace primitive type with "patches" keyword
 		// draw
+
+		//-> set patch vertices parameter for triangles
 		glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+		//	-> copy regular rendering algorithm
+		//	-> replace primitive type with "patches" keyword
 		glBindVertexArray(drawable->vertexArray->handle->handle);
 		if (drawable->indexType)
 		{
