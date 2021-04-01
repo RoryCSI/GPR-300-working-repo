@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	tessTriTangentBasis_tcs4x.glsl
 	Tessellation control passing tangent basis (pass-thru).

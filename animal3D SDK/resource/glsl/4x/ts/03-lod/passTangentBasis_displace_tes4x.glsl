@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	passTangentBasis_displace_tes4x.glsl
 	Pass interpolated and displaced tangent basis.

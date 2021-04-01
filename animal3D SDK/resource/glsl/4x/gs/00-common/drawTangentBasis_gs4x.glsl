@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	drawTangentBases_gs4x.glsl
 	Draw tangent bases of vertices and/or faces, and/or wireframe shapes, 

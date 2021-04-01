@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	drawPhongPOM_fs4x.glsl
 	Output Phong shading with parallax occlusion mapping (POM).
