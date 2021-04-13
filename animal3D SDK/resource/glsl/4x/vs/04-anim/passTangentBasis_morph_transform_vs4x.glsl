@@ -34,11 +34,13 @@
 //		(hint: results can be stored in local variables named after the 
 //		complete tangent basis attributes provided before any changes)
 
+
 layout (location = 0) in vec4 aPosition;
 layout (location = 2) in vec3 aNormal;
 layout (location = 8) in vec4 aTexcoord;
 layout (location = 10) in vec3 aTangent;
 layout (location = 11) in vec3 aBitangent;
+
 
 struct sModelMatrixStack
 {
@@ -51,6 +53,15 @@ struct sModelMatrixStack
 	mat4 modelViewProjectionMat;		// model-view-projection matrix (object -> clip)
 	mat4 atlasMat;						// atlas matrix (texture -> cell)
 };
+
+struct sMorphTarget
+{
+	vec4 position;
+	vec3 normal;	float nPad;
+	vec3 tangent;	float tPad;
+};
+
+//layout (location = 0) in sMorphTarget aMorphTarget[5];
 
 uniform ubTransformStack
 {
