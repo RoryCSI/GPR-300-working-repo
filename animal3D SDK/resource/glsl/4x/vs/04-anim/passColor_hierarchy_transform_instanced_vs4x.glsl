@@ -28,7 +28,7 @@
 
 #define MAX_COLORS 24
 
-// ****TO-DO: 
+// ****Done: 
 //	-> declare hierarchy depth info in uniform block
 //	-> use hierarchy depth to select color
 
@@ -36,6 +36,7 @@ layout (location = 0) in vec4 aPosition;
 
 uniform ubTransformMVP {
 	mat4 uMVP[MAX_INSTANCES];
+	uint uDepth[MAX_COLORS]; // -> Appended to ubo_MVP on line 217 in Animate-idle-update
 };
 
 uniform vec4 uColor0[MAX_COLORS];
@@ -47,11 +48,10 @@ flat out int vInstanceID;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-//	gl_Position = aPosition;
 	gl_Position = uMVP[gl_InstanceID] * aPosition;
-	
-	vColor = uColor0[gl_InstanceID];
+
+	int depth = int (uDepth[gl_InstanceID]);
+	vColor = uColor0[depth];
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
