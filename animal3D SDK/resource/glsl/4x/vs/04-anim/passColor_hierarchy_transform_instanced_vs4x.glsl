@@ -36,7 +36,7 @@ layout (location = 0) in vec4 aPosition;
 
 uniform ubTransformMVP {
 	mat4 uMVP[MAX_INSTANCES];
-	uint uDepth[MAX_COLORS]; // -> Appended to ubo_MVP on line 217 in Animate-idle-update
+	uint uDepth[MAX_COLORS]; // -> Appended to ubo_MVP on line 217 in Animate-idle-update, already calculated in Animate-load
 };
 
 uniform vec4 uColor0[MAX_COLORS];
@@ -50,8 +50,8 @@ void main()
 {
 	gl_Position = uMVP[gl_InstanceID] * aPosition;
 
-	int depth = int (uDepth[gl_InstanceID]);
-	vColor = uColor0[depth];
+	//Sample color-to-use from uColor0 array using the depth-in-hierarchy uniform
+	vColor = uColor0[uDepth[gl_InstanceID]];
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
