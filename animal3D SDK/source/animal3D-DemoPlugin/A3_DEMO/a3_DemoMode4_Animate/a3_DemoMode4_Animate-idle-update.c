@@ -78,11 +78,26 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 			// testing: copy base pose
 			tmpPose = *pBase;
 
-			// ****TO-DO:
+			// ****Done:
 			// interpolate channels
 
-			// ****TO-DO:
+			//intializations
+			a3vec4 posePosition = {0,0,0,0};
+			a3vec4 poseRotation = {0,0,0,0};
+			a3vec3 poseScale = {0,0,0};
+
+			//Interpolating pos, rot, and scale
+			a3real4Lerp(posePosition.v, p0->position.v, p1->position.v, u);
+			a3real4Lerp(poseRotation.v, p0->euler.v, p1->euler.v, u);
+			a3real3Lerp(poseScale.v, p0->scale.v, p1->scale.v, u);
+
+			// ****Done:
 			// concatenate base pose
+
+			//adding on to the base pose (multiplying for scale though)
+			a3real4Add(tmpPose.position.v, posePosition.v);
+			a3real4Add(tmpPose.euler.v, poseRotation.v);
+			a3real3ProductComp(tmpPose.scale.v, poseScale.v, pBase->scale.v);
 
 			// ****Done:
 			// convert to matrix
