@@ -84,9 +84,22 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 			// ****TO-DO:
 			// concatenate base pose
 
-			// ****TO-DO:
+			// ****Done:
 			// convert to matrix
+			a3mat4 temp = {
+				tmpPose.scale.x, 0.0f, 0.0f, 0.0f,
+				0.0f, tmpPose.scale.y, 0.0f, 0.0f,
+				0.0f, 0.0f, tmpPose.scale.z, 0.0f,
+				tmpPose.position.x, tmpPose.position.y,tmpPose.position.z, 1.0f
+			};
 
+			a3mat4 rotMat = a3mat4_identity;
+
+			a3real4x4SetRotateXYZ(rotMat.m, tmpPose.euler.x, tmpPose.euler.y, tmpPose.euler.z);
+			a3real4x4Concat(rotMat.m, temp.m);
+
+			//localSpaceArray[j] = temp;
+			*localSpaceArray = temp;
 		}
 
 		// done
@@ -100,11 +113,25 @@ inline int a3animate_updateSkeletonObjectSpace(a3_Hierarchy const* hierarchy,
 {
 	if (hierarchy && objectSpaceArray && localSpaceArray)
 	{
-		// ****TO-DO: 
+		// ****Done: 
 		// forward kinematics
-		//a3ui32 j;
-		//a3i32 jp;
+		a3ui32 j = 0;
+		a3i32 jp = 0;
 
+		//From Buckstein's lecture9 skeletal intro.pdf
+		for (j; j < hierarchy->numNodes; ++j)
+		{
+			jp = hierarchy->nodes[j].parentIndex;
+
+			if (jp < 0)
+			{
+				objectSpaceArray[j] = localSpaceArray[j];
+			}
+			else// if (jp < (a3i32) j)
+			{
+				a3real4x4Product(objectSpaceArray[j].m, objectSpaceArray[jp].m, localSpaceArray[j].m);
+			}
+		}
 		// done
 		return 1;
 	}
