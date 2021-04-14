@@ -18,6 +18,8 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 	
+	///////Modified by Rory Beebout///////
+
 	passColor_hierarchy_transform_instanced_vs4x.glsl
 	Transform position attribute for instance and pass hierarchical color.
 */
