@@ -28,7 +28,7 @@
 
 #define MORPH_TARGETS 5
 
-// ****TO-DO: 
+// ****Done: 
 //	-> declare morph target attributes
 //	-> declare and implement morph target interpolation algorithm
 //	-> declare interpolation time/param/keyframe uniform
@@ -64,9 +64,7 @@ struct sMorphTarget
 };
 
 layout (location = 0) in sMorphTarget aMorphTarget[MORPH_TARGETS];
-
-
-layout (location = 15) in vec4 aTexcoord;
+layout (location = 15) in vec4 aTexcoord; // -> Demostate load ~333 -> "the final attribute will be for texture coordinates"
 
 uniform ubTransformStack
 {
@@ -86,6 +84,8 @@ flat out int vInstanceID;
 
 mat4 CreateLerpedMorphTargetTBN(sMorphTarget start, sMorphTarget goal, float param)
 {
+	//referenced https://en.cppreference.com/w/cpp/numeric/lerp for lerp equation ( a + t(b - a)
+
 	//lerp tangent, normal, and get bitangent as their cross product.
 	vec3 lerpTangent = start.tangent + param * (goal.tangent - start.tangent);
 	vec3 lerpNormal = start.normal + param * (goal.normal - start.normal);
@@ -107,8 +107,6 @@ vec4 lerpVec4(vec4 start, vec4 goal, float param)
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	//gl_Position = aPosition;
 	sModelMatrixStack t = uModelMatrixStack[uIndex];
 
 	//recreate index and param from uTime
