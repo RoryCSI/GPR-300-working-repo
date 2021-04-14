@@ -26,6 +26,8 @@
 
 #define MAX_OBJECTS 128
 
+#define MORPH_TARGETS 5
+
 // ****TO-DO: 
 //	-> declare morph target attributes
 //	-> declare and implement morph target interpolation algorithm
@@ -35,11 +37,11 @@
 //		complete tangent basis attributes provided before any changes)
 
 
-layout (location = 0) in vec4 aPosition;
-layout (location = 2) in vec3 aNormal;
-layout (location = 8) in vec4 aTexcoord;
-layout (location = 10) in vec3 aTangent;
-layout (location = 11) in vec3 aBitangent;
+//layout (location = 0) in vec4 aPosition;
+//layout (location = 2) in vec3 aNormal;
+//layout (location = 8) in vec4 aTexcoord;
+//layout (location = 10) in vec3 aTangent;
+//layout (location = 11) in vec3 aBitangent;
 
 
 struct sModelMatrixStack
@@ -57,17 +59,22 @@ struct sModelMatrixStack
 struct sMorphTarget
 {
 	vec4 position;
-	vec3 normal;	float nPad;
-	vec3 tangent;	float tPad;
+	vec3 normal;//	float nPad;
+	vec3 tangent;//	float tPad;
 };
 
-//layout (location = 0) in sMorphTarget aMorphTarget[5];
+layout (location = 0) in sMorphTarget aMorphTarget[MORPH_TARGETS];
+
+
+layout (location = 15) in vec4 aTexcoord;
 
 uniform ubTransformStack
 {
 	sModelMatrixStack uModelMatrixStack[MAX_OBJECTS];
 };
+
 uniform int uIndex;
+uniform float uTime;
 
 out vbVertexData {
 	mat4 vTangentBasis_view;
@@ -77,14 +84,45 @@ out vbVertexData {
 flat out int vVertexID;
 flat out int vInstanceID;
 
+mat4 CreateLerpedMorphTargetTBN(sMorphTarget start, sMorphTarget goal, float param)
+{
+	//lerp tangent, normal, and get bitangent as their cross product.
+	vec3 lerpTangent = start.tangent + param * (goal.tangent - start.tangent);
+	vec3 lerpNormal = start.normal + param * (goal.normal - start.normal);
+	vec3 lerpBitangent = cross(lerpTangent, lerpNormal);
+
+	//assemble and output matrix
+	mat4 lerpedMorphTarget = mat4(lerpTangent, 0.0,
+								  lerpBitangent,0.0,
+								  lerpNormal, 0.0,
+								  vec4(0.0));
+	return lerpedMorphTarget;
+}
+
+vec4 lerpVec4(vec4 start, vec4 goal, float param)
+{
+	vec4 lerpPosition = start + param * (goal - start);
+	return lerpPosition;
+}
+
 void main()
 {
 	// DUMMY OUTPUT: directly assign input position to output position
 	//gl_Position = aPosition;
-	
 	sModelMatrixStack t = uModelMatrixStack[uIndex];
-	
-	vTangentBasis_view = t.modelViewMatInverseTranspose * mat4(aTangent, 0.0, aBitangent, 0.0, aNormal, 0.0, vec4(0.0));
+
+	//recreate index and param from uTime
+	// -> Animate-idle-render sends uTime as Index + Param on line ~252
+	int index = int (uTime);
+	float param = uTime - index;
+
+	//lerp position
+	vec4 aPosition = lerpVec4(aMorphTarget[index].position, aMorphTarget[(index + 1) % MORPH_TARGETS].position, param);
+
+	//create Lerped TBN
+	vTangentBasis_view = t.modelViewMatInverseTranspose * CreateLerpedMorphTargetTBN(aMorphTarget[index], aMorphTarget[(index + 1) % MORPH_TARGETS], param);
+
+	//outputs
 	vTangentBasis_view[3] = t.modelViewMat * aPosition;
 	gl_Position = t.modelViewProjectionMat * aPosition;
 	
