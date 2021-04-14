@@ -86,6 +86,9 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 
 			// ****Done:
 			// convert to matrix
+
+			//Temp matrix to store final result
+			// -> Already contains scale, and translation, needs rotation
 			a3mat4 temp = {
 				tmpPose.scale.x, 0.0f, 0.0f, 0.0f,
 				0.0f, tmpPose.scale.y, 0.0f, 0.0f,
@@ -93,15 +96,17 @@ inline int a3animate_updateSkeletonLocalSpace(a3_Hierarchy const* hierarchy,
 				tmpPose.position.x, tmpPose.position.y,tmpPose.position.z, 1.0f
 			};
 
-			a3mat4 rotMat = a3mat4_identity;
+			//Get rotation matrix
+			a3mat4 rotMat = a3mat4_identity; //initialize for storage
+			a3real4x4SetRotateXYZ(rotMat.m, tmpPose.euler.x, tmpPose.euler.y, tmpPose.euler.z); //get appropriate rotation matrix, store it
 
-			a3real4x4SetRotateXYZ(rotMat.m, tmpPose.euler.x, tmpPose.euler.y, tmpPose.euler.z);
+			//combine transformations into one matrix
 			a3real4x4Concat(rotMat.m, temp.m);
 
-			//localSpaceArray[j] = temp;
-			*localSpaceArray = temp;
+			//set localSpaceArray
+			*localSpaceArray = temp; // same as -> localSpaceArray[j] = temp; but more effecient (probably).
+			
 		}
-
 		// done
 		return 1;
 	}
@@ -118,17 +123,22 @@ inline int a3animate_updateSkeletonObjectSpace(a3_Hierarchy const* hierarchy,
 		a3ui32 j = 0;
 		a3i32 jp = 0;
 
-		//From Buckstein's lecture9 skeletal intro.pdf
-		for (j; j < hierarchy->numNodes; ++j)
+		//From Buckstein's lecture9 skeletal intro.pdf, class concepting.
+		for (j; j < hierarchy->numNodes; j++)
 		{
+			//get parrent index of current
 			jp = hierarchy->nodes[j].parentIndex;
 
+			//jp is -1 for root case
 			if (jp < 0)
 			{
 				objectSpaceArray[j] = localSpaceArray[j];
 			}
+			//for all non-root cases
 			else// if (jp < (a3i32) j)
 			{
+				//multiply objectSpace position of parent and local transformation to get objectSpace position
+				// -> Order is important
 				a3real4x4Product(objectSpaceArray[j].m, objectSpaceArray[jp].m, localSpaceArray[j].m);
 			}
 		}
