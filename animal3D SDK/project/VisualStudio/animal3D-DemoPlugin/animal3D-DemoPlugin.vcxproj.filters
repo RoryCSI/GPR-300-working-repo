@@ -121,6 +121,9 @@
     <Filter Include="Source Files\common\A3_DEMO\a3_DemoMode5_Final">
       <UniqueIdentifier>{75e2cbc1-c5f3-48ee-9a17-7f5a838040e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\vs\05-final">
+      <UniqueIdentifier>{e08613a7-ef3f-4f64-a3d0-8a92797198d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -408,6 +411,9 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\vs\04-anim\passColor_hierarchy_transform_instanced_vs4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\vs\04-anim</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\vs\05-final\passTangentBasis_wave_transform_vs4x.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\vs\05-final</Filter>
     </None>
   </ItemGroup>
 </Project>

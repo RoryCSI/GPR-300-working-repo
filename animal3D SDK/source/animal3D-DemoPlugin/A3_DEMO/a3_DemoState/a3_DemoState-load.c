@@ -506,6 +506,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			a3_DemoStateShader
 				passColor_hierarchy_transform_instanced_vs[1],
 				passTangentBasis_morph_transform_vs[1];
+			// 05-final
+			a3_DemoStateShader
+				passTangentBasis_wave_transform_vs[1];
 
 			// tessellation shaders
 			// 03-lod
@@ -574,9 +577,11 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 03-lod
 			{ { { 0 },	"shdr-vs:empty",					a3shader_vertex  ,	1,{ A3_DEMO_VS"03-lod/e/empty_vs4x.glsl" } } },
 			// 04-anim
-			{ { { 0 },	"shdr-vs:pass-hcol-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"04-anim/passColor_hierarchy_transform_instanced_vs4x.glsl" } } }, // ****DECODE
-			{ { { 0 },	"shdr-vs:pass-tb-morph-trans",		a3shader_vertex  ,	2,{ A3_DEMO_VS"04-anim/passTangentBasis_morph_transform_vs4x.glsl", // ****DECODE
-																					A3_DEMO_VS"00-common/utilCommon_vs4x.glsl",} } }, // ****DECODE
+			{ { { 0 },	"shdr-vs:pass-hcol-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"04-anim/passColor_hierarchy_transform_instanced_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-tb-morph-trans",		a3shader_vertex  ,	2,{ A3_DEMO_VS"04-anim/passTangentBasis_morph_transform_vs4x.glsl",
+																					A3_DEMO_VS"00-common/utilCommon_vs4x.glsl",} } },
+			// 05-final
+			{ { { 0 },	"shdr-vs:pass-tb-wave-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"05-anim/passTangentBasis_morph_transform_vs4x.glsl" } } },
 
 			// ts
 			// 03-lod
@@ -829,6 +834,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passColor_hierarchy_transform_instanced_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
+	// 05-final programs: 
+	// Water surface waves
+	currentDemoProg = demoState->prog_drawPhongWaves;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-PhongWaves");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_wave_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongPOM_fs->shader);
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs

@@ -206,7 +206,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		{
 			0, 0, 0, 0, 0,
 			demoState->prog_drawPhongPOM_morph,
-			demoState->prog_drawPhongPOM,
+			demoState->prog_drawPhongWaves,
 		},
 	};
 	// overlay shader programs
