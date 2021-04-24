@@ -273,6 +273,7 @@
     <None Include="..\..\..\resource\glsl\4x\ts\03-lod\passColor_interp_tes4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\ts\03-lod\tessIso_tcs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\ts\03-lod\tessTriTangentBasis_tcs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\ts\05-final\passTangentBasis_wave_displace_tes4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTangentBasis_transform_instanced_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTangentBasis_transform_vs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\vs\00-common\passTexcoord_transform_instanced_vs4x.glsl" />

@@ -507,8 +507,6 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				passColor_hierarchy_transform_instanced_vs[1],
 				passTangentBasis_morph_transform_vs[1];
 			// 05-final
-			a3_DemoStateShader
-				passTangentBasis_wave_transform_vs[1];
 
 			// tessellation shaders
 			// 03-lod
@@ -518,6 +516,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			a3_DemoStateShader
 				passColor_interp_tes[1],
 				passTangentBasis_displace_tes[1];
+			// 05-final
+			a3_DemoStateShader
+				passTangentBasis_wave_displace_tes[1];
 
 			// geometry shaders
 			// 00-common
@@ -572,23 +573,23 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-tb-sc-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"01-pipeline/e/passTangentBasis_shadowCoord_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-sc-trans-inst",	a3shader_vertex  ,	1,{ A3_DEMO_VS"01-pipeline/e/passTangentBasis_shadowCoord_transform_instanced_vs4x.glsl" } } },
 			// 02-pipeline-deferred
-			{ { { 0 },	"shdr-vs:pass-tb-ubo-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"02-pipeline-deferred/e/passTangentBasis_ubo_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-tb-ubo-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"02-pipeline-deferred/passTangentBasis_ubo_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-clipb-trans-inst",	a3shader_vertex  ,	1,{ A3_DEMO_VS"02-pipeline-deferred/e/passClipBiased_transform_instanced_vs4x.glsl" } } },
 			// 03-lod
-			{ { { 0 },	"shdr-vs:empty",					a3shader_vertex  ,	1,{ A3_DEMO_VS"03-lod/e/empty_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:empty",					a3shader_vertex  ,	1,{ A3_DEMO_VS"03-lod/empty_vs4x.glsl" } } },
 			// 04-anim
 			{ { { 0 },	"shdr-vs:pass-hcol-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"04-anim/passColor_hierarchy_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-morph-trans",		a3shader_vertex  ,	2,{ A3_DEMO_VS"04-anim/passTangentBasis_morph_transform_vs4x.glsl",
 																					A3_DEMO_VS"00-common/utilCommon_vs4x.glsl",} } },
-			// 05-final
-			{ { { 0 },	"shdr-vs:pass-tb-wave-trans",		a3shader_vertex  ,	1,{ A3_DEMO_VS"05-anim/passTangentBasis_morph_transform_vs4x.glsl" } } },
 
 			// ts
 			// 03-lod
-			{ { { 0 },	"shdr-tcs:tess-line-curve",			a3shader_tessellationControl,		1,{ A3_DEMO_TS"03-lod/e/tessIso_tcs4x.glsl" } } },
-			{ { { 0 },	"shdr-tcs:tess-tri-lod",			a3shader_tessellationControl,		1,{ A3_DEMO_TS"03-lod/e/tessTriTangentBasis_tcs4x.glsl" } } },
-			{ { { 0 },	"shdr-tes:passthru-interp",			a3shader_tessellationEvaluation,	1,{ A3_DEMO_TS"03-lod/e/passColor_interp_tes4x.glsl" } } },
-			{ { { 0 },	"shdr-tes:pass-tb-disp",			a3shader_tessellationEvaluation,	1,{ A3_DEMO_TS"03-lod/e/passTangentBasis_displace_tes4x.glsl" } } },
+			{ { { 0 },	"shdr-tcs:tess-line-curve",			a3shader_tessellationControl,		1,{ A3_DEMO_TS"03-lod/tessIso_tcs4x.glsl" } } },
+			{ { { 0 },	"shdr-tcs:tess-tri-lod",			a3shader_tessellationControl,		1,{ A3_DEMO_TS"03-lod/tessTriTangentBasis_tcs4x.glsl" } } },
+			{ { { 0 },	"shdr-tes:passthru-interp",			a3shader_tessellationEvaluation,	1,{ A3_DEMO_TS"03-lod/passColor_interp_tes4x.glsl" } } },
+			{ { { 0 },	"shdr-tes:pass-tb-disp",			a3shader_tessellationEvaluation,	1,{ A3_DEMO_TS"03-lod/passTangentBasis_displace_tes4x.glsl" } } },
+			// 05-final
+			{ { { 0 },	"shdr-tes:pass-tb-wave-disp",		a3shader_tessellationEvaluation,	1,{ A3_DEMO_TS"05-final/passTangentBasis_wave_displace_tes4x.glsl" } } },
 
 			// gs
 			// 00-common
@@ -838,8 +839,20 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	// Water surface waves
 	currentDemoProg = demoState->prog_drawPhongWaves;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-PhongWaves");
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_wave_transform_vs->shader);
-	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongPOM_fs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_ubo_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tessTriTangentBasis_tcs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_wave_displace_tes->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawPhongNM_fs->shader);
+
+	// tangent basis LOD
+	currentDemoProg = demoState->prog_drawTangentBasisWaves;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tb-LOD");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_ubo_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tessTriTangentBasis_tcs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_wave_displace_tes->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTangentBasis_gs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
+
 
 	// activate a primitive for validation
 	// makes sure the specified geometry can draw using programs

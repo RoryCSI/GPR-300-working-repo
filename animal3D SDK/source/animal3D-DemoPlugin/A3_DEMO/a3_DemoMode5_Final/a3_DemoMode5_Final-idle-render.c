@@ -105,6 +105,38 @@ void a3final_render_controls(a3_DemoState const* demoState, a3_DemoMode5_Final c
 
 
 //-----------------------------------------------------------------------------
+// draw as patches
+a3ret a3finalVertexDrawableRenderTriPatches(a3_VertexDrawable const* drawable)
+{
+	// triangle: use first 3 outer levels and only first inner
+	// https://www.khronos.org/opengl/wiki/Tessellation 
+	//a3f32 const outerLevels[4] = { 1.0f, 1.0f, 1.0f, 0.0f }, innerLevels[2] = { 1.0f, 0.0f }; // no tessellation
+	//a3f32 const outerLevels[4] = { 1.0f, 1.0f, 1.0f, 0.0f }, innerLevels[2] = { 2.0f, 0.0f }; // create vertex at center
+	//a3f32 const outerLevels[4] = { 2.0f, 2.0f, 2.0f, 0.0f }, innerLevels[2] = { 3.0f, 0.0f }; // create triangle at center, half edges
+
+	if (drawable)
+	{
+		// set patch info
+		glPatchParameteri(GL_PATCH_VERTICES, 3);
+		//glPatchParameterfv(GL_PATCH_DEFAULT_OUTER_LEVEL, outerLevels);
+		//glPatchParameterfv(GL_PATCH_DEFAULT_INNER_LEVEL, innerLevels);
+
+		// draw
+		glBindVertexArray(drawable->vertexArray->handle->handle);
+		if (drawable->indexType)
+		{
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawable->indexBuffer->handle->handle);
+			glDrawElements(GL_PATCHES, drawable->count, drawable->indexType, drawable->indexing);
+		}
+		else
+			glDrawArrays(GL_PATCHES, drawable->first, drawable->count);
+		return 1;
+	}
+	return -1;
+}
+typedef a3ret(*a3_VertexDrawableRenderFunc)(a3_VertexDrawable const* drawable);
+
+//-----------------------------------------------------------------------------
 
 // sub-routine for rendering the demo state using the shading pipeline
 void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* demoMode, a3f64 const dt)
@@ -204,9 +236,9 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	// forward pipeline shader programs
 	const a3_DemoStateShaderProgram* renderProgram[final_renderMode_max][finalMaxCount_sceneObject] = {
 		{
-			0, 0, 0, 0, 0,
-			demoState->prog_drawPhongPOM_morph,
-			demoState->prog_drawPhongWaves,
+			0, 0, 0, 0, 0,						// 1, 2, 3, 4, 5,
+			demoState->prog_drawPhongPOM_morph, // 6
+			demoState->prog_drawPhongWaves,		// 7
 		},
 	};
 	// overlay shader programs
@@ -214,7 +246,15 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		{
 			0, 0, 0, 0, 0,
 			demoState->prog_drawTangentBasisPOM_morph,
-			demoState->prog_drawTangentBasisPOM,
+			demoState->prog_drawTangentBasisWaves,
+		},
+	};
+	// drawable render function
+	const a3_VertexDrawableRenderFunc renderFunc[final_renderMode_max][finalMaxCount_sceneObject] = {
+		{
+			0, 0, 0, 0, 0,
+			a3vertexDrawableActivateAndRender,
+			a3finalVertexDrawableRenderTriPatches,
 		},
 	};
 	// lights
@@ -235,8 +275,11 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3_DemoMode5_Final_RenderTarget const renderTarget = demoMode->renderTarget[renderPass],
 		renderTargetCount = demoMode->renderTargetCount[renderPass];
 
+	
+
 	// final model matrix and full matrix stack
 	a3mat4 projectionMat = activeCamera->projectorMatrixStackPtr->projectionMat;
+	a3mat4 projectionMatInv = activeCamera->projectorMatrixStackPtr->projectionMatInverse;
 	a3mat4 viewProjectionMat = activeCamera->projectorMatrixStackPtr->viewProjectionMat;
 	a3mat4 modelMat, modelViewProjectionMat;
 
@@ -285,6 +328,19 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		currentDemoProgram = renderProgram[renderMode][j];
 		a3shaderProgramActivate(currentDemoProgram->program);
 
+		// model drawing function
+		a3_VertexDrawableRenderFunc const a3vertexDrawableRender = renderFunc[renderMode][j];
+
+		// send shared data: 
+		//	- projection matrix
+		//	- light data
+		//	- activate shared textures including atlases if using
+		//	- shared animation data
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, projectionMat.mm);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, projectionMatInv.mm);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
+		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor0, hueCount, rgba4->v);
+
 		// send lighting uniforms and bind blocks where appropriate
 		a3shaderUniformBufferActivate(demoState->ubo_transform, demoProg_blockTransformStack);
 		a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight);
@@ -300,9 +356,13 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		a3textureActivate(textureSet[j][3], a3tex_unit03);
 		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uSize, 1, htScale + j);
 
+		// tess levels
+		a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uLevelOuter, 1, tessLevel[j]);
+		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLevelInner, 1, tessLevel[j] + 3);
+
 		// draw
 		a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
-		a3vertexDrawableActivateAndRender(drawable[j]);
+		a3vertexDrawableRender(drawable[j]);
 	}
 
 	// stop using stencil
