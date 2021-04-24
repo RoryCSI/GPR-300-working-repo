@@ -110,6 +110,7 @@ void a3demo_render_controls(a3_DemoState const* demoState,
 		"SCREEN-SPACE EFFECTS SCENE",
 		"CURVE PATH EDITOR SCENE",
 		"ANIMATION OBJECTS SCENE",
+		"WATER AND COMPUTE SCENE",
 	};
 
 	// demo mode
