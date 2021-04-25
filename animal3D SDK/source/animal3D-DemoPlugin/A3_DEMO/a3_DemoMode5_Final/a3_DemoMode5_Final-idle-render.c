@@ -218,7 +218,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	const a3f32 htScale[finalMaxCount_sceneObject] = {
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		0.010f,	// teapot
-		0.015f,	// ground
+		0.3f,	// ground
 	};
 	// tessellation levels
 	const a3f32 tessLevel[finalMaxCount_sceneObject][4] = {
