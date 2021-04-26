@@ -237,7 +237,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	const a3_DemoStateShaderProgram* renderProgram[final_renderMode_max][finalMaxCount_sceneObject] = {
 		{
 			0, 0, 0, 0, 0,						// 1, 2, 3, 4, 5,
-			demoState->prog_drawPhongPOM_morph, // 6
+			demoState->prog_drawPhongNM_ubo, // 6
 			demoState->prog_drawPhongWaves,		// 7
 		},
 	};

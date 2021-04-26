@@ -46,6 +46,8 @@ out vbVertexData {
 
 uniform sampler2D uTex_hm;
 
+uniform float uTime;
+
 void main()
 {
 	//Pass on vertexData
@@ -100,9 +102,17 @@ void main()
     vec4 tc2 = gl_TessCoord.z * vVertexData_tess[2].vTexcoord_atlas;
     vec4 tessTexCoord = tc0 + tc1 + tc2;
 
+
+	//calculate wave pos displacement
+	float k = 2 * 3.14 / 2;
+
+	2 * sin(k * (pos.x - 1 * uTime));
+    float waveHeight = 2 * sin(k * (pos.x - 1 * uTime));
+    pos += normal * (waveHeight * 0.6f);
+
 	//calculate pos displacement
-    float height = texture(uTex_hm, tessTexCoord.xy).r;
-    pos += normal * (height * 0.3f);
+    float mapHeight = texture(uTex_hm, tessTexCoord.xy).r;
+    pos += normal * (mapHeight * 0.3f);
 
 	//Pass data
 	vVertexData.vTangentBasis_view = mat4(tangent,bitangent,normal,pos_view);

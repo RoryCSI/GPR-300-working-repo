@@ -615,14 +615,14 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 02-pipeline-deferred
 			{ { { 0 },	"shdr-fs:post-defer-comp",			a3shader_fragment,	1,{ A3_DEMO_FS"02-pipeline-deferred/e/postDeferredLightingComposite_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:post-Phong-defer",			a3shader_fragment,	2,{ A3_DEMO_FS"02-pipeline-deferred/e/postDeferredShading_fs4x.glsl",
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },
 			{ { { 0 },	"shdr-fs:draw-Phong-light",			a3shader_fragment,	2,{ A3_DEMO_FS"02-pipeline-deferred/e/drawPhongPointLight_fs4x.glsl",
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },
 			{ { { 0 },	"shdr-fs:draw-gbuffers",			a3shader_fragment,	1,{ A3_DEMO_FS"02-pipeline-deferred/e/drawGBuffers_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Phong-nm",			a3shader_fragment,	2,{ A3_DEMO_FS"02-pipeline-deferred/drawPhongNM_fs4x.glsl",
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },
-			{ { { 0 },	"shdr-fs:draw-Phong-pom",			a3shader_fragment,	2,{ A3_DEMO_FS"03-lod/e/drawPhongPOM_fs4x.glsl",
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },
+			{ { { 0 },	"shdr-fs:draw-Phong-pom",			a3shader_fragment,	2,{ A3_DEMO_FS"03-lod/drawPhongPOM_fs4x.glsl",
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
