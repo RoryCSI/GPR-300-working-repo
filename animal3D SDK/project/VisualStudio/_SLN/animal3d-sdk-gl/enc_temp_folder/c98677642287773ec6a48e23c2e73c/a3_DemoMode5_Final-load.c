@@ -156,8 +156,6 @@ void a3final_loadValidate(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode)
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
 	a3demo_initSceneObject(demoMode->obj_ground, 6,
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
-	a3demo_initSceneObject(demoMode->obj_torus, 7,
-		demoMode->sceneObjectData, demoMode->modelMatrixStack);
 
 	// initialize projector pointers
 	a3demo_initProjector(demoMode->proj_camera_main,
@@ -255,19 +253,6 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
 	sceneObjectData->position.x = +12.0f;
 	sceneObjectData->position.y = +12.0f;
-
-	sceneObject = demoMode->obj_torus;
-	sceneObjectData = sceneObject->dataPtr;
-	a3hierarchySetNode(demoMode->hierarchy_scene,
-		sceneObject->sceneHierarchyIndex, sceneObject_parent->sceneHierarchyIndex, "obj_torus");
-	a3demo_resetSceneObjectData(sceneObjectData);
-	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
-	sceneObjectData->position.x = -a3real_six;
-	sceneObjectData->position.y = a3real_zero;
-	sceneObjectData->position.z = +a3real_four;
-	sceneObjectData->scale.x = a3real_two;
-	sceneObjectData->scaleMode = a3scale_uniform;
-	sceneObject->modelMatrixStackPtr->atlasMat = demoState->atlas_marble;
 
 	sceneObject = demoMode->obj_teapot;
 	sceneObjectData = sceneObject->dataPtr;

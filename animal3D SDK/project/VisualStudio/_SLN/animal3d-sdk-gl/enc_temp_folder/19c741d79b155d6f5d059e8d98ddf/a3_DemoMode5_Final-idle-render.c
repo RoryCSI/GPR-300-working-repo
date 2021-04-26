@@ -231,7 +231,6 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		0,
 		demoState->draw_teapot_morph,
 		demoState->draw_unit_plane_z,
-		demoState->draw_unit_torus,
 	};
 
 	// textures (diffuse, specular, normal, height)
@@ -266,7 +265,6 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 			0, 0, 0, 0, 0,						// 1, 2, 3, 4, 5,
 			demoState->prog_drawPhongNM_ubo, // 6
 			demoState->prog_drawPhongWaves,		// 7
-			demoState->prog_drawColorUnif,
 		},
 	};
 	// overlay shader programs
@@ -274,7 +272,6 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		{
 			0, 0, 0, 0, 0,
 			demoState->prog_drawTangentBasisPOM_morph,
-			demoState->prog_drawTangentBasisWaves,
 			demoState->prog_drawTangentBasisWaves,
 		},
 	};
@@ -284,7 +281,6 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 			0, 0, 0, 0, 0,
 			a3vertexDrawableActivateAndRender,
 			a3finalVertexDrawableRenderTriPatches,
-			a3vertexDrawableActivateAndRender,
 		},
 	};
 	// lights

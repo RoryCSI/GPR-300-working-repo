@@ -127,6 +127,9 @@
     <Filter Include="Resource Files\A3_DEMO\glsl\4x\ts\05-final">
       <UniqueIdentifier>{b58e5d4e-1091-403b-b3aa-0f9bacd06e5a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\A3_DEMO\glsl\4x\fs\05-final">
+      <UniqueIdentifier>{6d0c16c2-da3d-417d-8072-ea21fad0b336}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="_src_win\main_dll.c">
@@ -420,6 +423,9 @@
     </None>
     <None Include="..\..\..\resource\glsl\4x\ts\05-final\passTangentBasis_wave_displace_tes4x.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\ts\05-final</Filter>
+    </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\05-final\drawSSR.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-final</Filter>
     </None>
   </ItemGroup>
 </Project>

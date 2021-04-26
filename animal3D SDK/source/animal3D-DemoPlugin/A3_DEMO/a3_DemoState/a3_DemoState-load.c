@@ -551,6 +551,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			// 03-lod
 			a3_DemoStateShader
 				drawPhongPOM_fs[1];
+			// 05-final
+			a3_DemoStateShader
+				drawSSR_fs[1];
 		};
 	} shaderList = {
 		{
@@ -623,6 +626,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },
 			{ { { 0 },	"shdr-fs:draw-Phong-pom",			a3shader_fragment,	2,{ A3_DEMO_FS"03-lod/drawPhongPOM_fs4x.glsl",
 																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },
+
+			// 02-pipeline-deferred
+			{ { { 0 },	"shdr-fs:draw-SSR",			a3shader_fragment,	1,{ A3_DEMO_FS"05-final/drawSSR.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -852,6 +858,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_wave_displace_tes->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTangentBasis_gs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
+
+	// blending
+	currentDemoProg = demoState->prog_drawSSR;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:post-SSR");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSSR_fs->shader);
 
 
 	// activate a primitive for validation

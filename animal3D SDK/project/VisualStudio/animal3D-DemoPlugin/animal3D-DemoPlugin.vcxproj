@@ -265,6 +265,7 @@
     <None Include="..\..\..\resource\glsl\4x\fs\02-pipeline-deferred\drawPhongPointLight_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\02-pipeline-deferred\postDeferredLightingComposite_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\03-lod\drawPhongPOM_fs4x.glsl" />
+    <None Include="..\..\..\resource\glsl\4x\fs\05-final\drawSSR.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorAttrib_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\fs\drawColorUnif_fs4x.glsl" />
     <None Include="..\..\..\resource\glsl\4x\gs\00-common\drawTangentBasis_gs4x.glsl" />
