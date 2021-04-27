@@ -266,7 +266,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 			0, 0, 0, 0, 0,						// 1, 2, 3, 4, 5,
 			demoState->prog_drawPhongNM_ubo, // 6
 			demoState->prog_drawPhongWaves,		// 7
-			demoState->prog_drawColorUnif,
+			demoState->prog_drawPhongWaves,
 		},
 	};
 	// overlay shader programs
@@ -667,13 +667,19 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 				currentSceneObject <= endSceneObject; ++currentSceneObject)
 			{
 				j = currentSceneObject->sceneHierarchyIndex;
+
 				currentDemoProgram = overlayProgram[renderMode][j];
 				a3shaderProgramActivate(currentDemoProgram->program);
+
+				// model drawing function
+				a3_VertexDrawableRenderFunc const a3vertexDrawableRender = renderFunc[renderMode][j];
 
 				// send lighting uniforms and bind blocks where appropriate
 				a3shaderUniformBufferActivate(demoState->ubo_transform, demoProg_blockTransformStack);
 				// projection matrix
 				a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, projectionMat.mm);
+				a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, projectionMatInv.mm);
+				a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 				// wireframe color
 				a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor0, hueCount, rgba4->v);
 				// blend color
@@ -686,9 +692,13 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 				// animation
 				a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uTime, 1, &keyframeTime);
 
+				// tess levels
+				a3shaderUniformSendFloat(a3unif_vec3, currentDemoProgram->uLevelOuter, 1, tessLevel[j]);
+				a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uLevelInner, 1, tessLevel[j] + 3);
+
 				// draw
 				a3shaderUniformSendInt(a3unif_single, currentDemoProgram->uIndex, 1, &j);
-				a3vertexDrawableActivateAndRender(drawable[j]);
+				a3vertexDrawableRender(drawable[j]);
 			}
 		}
 

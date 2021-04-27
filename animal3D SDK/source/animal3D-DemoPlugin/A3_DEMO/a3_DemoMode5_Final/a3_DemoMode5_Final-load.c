@@ -311,7 +311,7 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	pointLightData = pointLight->dataPtr;
 	a3demo_resetPointLightData(pointLightData);
 	pointLightData->worldPos = pointLight->sceneObjectPtr->dataPtr->position;
-	a3demo_setPointLightRadius(pointLightData, a3real_onehundred);
+	a3demo_setPointLightRadius(pointLightData, a3real_onehundred*3);
 
 
 	// set up animation

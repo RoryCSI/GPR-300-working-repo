@@ -113,7 +113,7 @@ enum a3_DemoMode5_Final_RenderTarget
 // maximum unique objects
 enum a3_DemoMode5_Final_ObjectMaxCount
 {
-	finalMaxCount_sceneObject = 8,
+	finalMaxCount_sceneObject = 9,
 	finalMaxCount_projector = 1,	// how many of the above behave as projectors
 	finalMaxCount_pointLight = 1,	// how many of the above behave as lights
 
