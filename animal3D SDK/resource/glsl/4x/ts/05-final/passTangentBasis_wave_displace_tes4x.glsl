@@ -48,20 +48,12 @@ uniform sampler2D uTex_hm;
 
 uniform float uTime;
 
+
+const float waveAmplitude = 2;
+const float waveSpeed = 0.5;
+const float waveLength = 0.5;
 void main()
 {
-	//Pass on vertexData
-	//vVertexData.vTangentBasis_view = vVertexData_tess[gl_PrimitiveID].vTangentBasis_view;
-	//vVertexData.vTexcoord_atlas = vVertexData_tess[gl_PrimitiveID].vTexcoord_atlas;
-
-	//pass through/dummy output;
-	/*
-	gl_Position = (gl_TessCoord.x * gl_in[0].gl_Position +
-				   gl_TessCoord.y * gl_in[1].gl_Position +
-				   gl_TessCoord.z * gl_in[2].gl_Position);
-	*/
-
-
 	//References	- https://stackoverflow.com/questions/24166446/glsl-tessellation-displacement-mapping
 	//				- Blue book
 	//				- http://ogldev.atspace.co.uk/www/tutorial30/tutorial30.html
@@ -94,7 +86,7 @@ void main()
 	vec4 pos_view0 = gl_TessCoord.x * vVertexData_tess[0].vTangentBasis_view[3];
     vec4 pos_view1 = gl_TessCoord.y * vVertexData_tess[1].vTangentBasis_view[3];
     vec4 pos_view2 = gl_TessCoord.z * vVertexData_tess[2].vTangentBasis_view[3];
-    vec4 pos_view = normalize(pos_view0 + pos_view1 + pos_view2);
+    vec4 pos_view = pos_view0 + pos_view1 + pos_view2;
 
 	// get weighted sum of texcoord to pass on
     vec4 tc0 = gl_TessCoord.x * vVertexData_tess[0].vTexcoord_atlas;
@@ -102,17 +94,28 @@ void main()
     vec4 tc2 = gl_TessCoord.z * vVertexData_tess[2].vTexcoord_atlas;
     vec4 tessTexCoord = tc0 + tc1 + tc2;
 
+	//calculate pos displacement
+    float heightmapDisplaceY = texture(uTex_hm, tessTexCoord.xy).r;
+	pos += normal * (heightmapDisplaceY * 0.3f);
 
 	//calculate wave pos displacement
-	float k = 2 * 3.14 / 2;
+	float k = 2 * 3.14 / waveLength;
+	float f = k * (gl_TessCoord.x - waveSpeed * uTime);
+    //float waveHeight = 2 * sin(k * ((pos.x/pos_view.x) - 1 * uTime));
+	float waveDisplaceY = waveAmplitude * sin(f);
 
-	2 * sin(k * (pos.x - 1 * uTime));
-    float waveHeight = 2 * sin(k * (pos.x - 1 * uTime));
-    pos += normal * (waveHeight * 0.6f);
+    //pos += normal * (heightmapDisplaceY * 0.3f) * (waveDisplaceY * 0.6f);
 
-	//calculate pos displacement
-    float mapHeight = texture(uTex_hm, tessTexCoord.xy).r;
-    pos += normal * (mapHeight * 0.3f);
+	pos += normal * (waveDisplaceY * 0.6f);
+
+	//TO-DO:
+	// -> Correct Tangent, Bitangent, Normal for wave positions.
+
+	//vec3 waveTangent = normalize(vec3(1, k * waveAmplitude * cos(f),0));
+	normal = normalize(vec4(-waveAmplitude * waveSpeed * cos(f),0.0,1.0,1.0));
+	bitangent = normalize(vec4(1,0, waveAmplitude * waveSpeed * cos(f),0.0));
+	tangent = vec4(cross(normal.xyz, bitangent.xyz), 0);
+	//tangent = normalize(vec4(1,0, waveAmplitude * waveSpeed * cos(f),0.0));
 
 	//Pass data
 	vVertexData.vTangentBasis_view = mat4(tangent,bitangent,normal,pos_view);
