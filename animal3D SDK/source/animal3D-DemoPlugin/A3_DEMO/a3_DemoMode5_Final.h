@@ -87,6 +87,7 @@ enum a3_DemoMode5_Final_RenderPass
 	final_renderPassBright8,
 	final_renderPassBlurH8,
 	final_renderPassBlurV8,
+	final_renderPassBlurFinal,
 	final_renderPassDisplay,
 
 	final_renderPass_max
@@ -103,9 +104,15 @@ enum a3_DemoMode5_Final_RenderTarget
 	final_renderTargetSceneSpecularSample,
 	final_renderTargetSceneDepth,
 	final_renderTargetScene_max,
+	
+	// lighting targets
+	final_renderTargetLightDiffuseShading = 0,
+	final_renderTargetLightSpecularShading,
+	final_renderTargetLight_max,
 
 	// post-processing targets
 	final_renderTargetPostColor = 0,
+
 	final_renderTargetPost_max,
 };
 

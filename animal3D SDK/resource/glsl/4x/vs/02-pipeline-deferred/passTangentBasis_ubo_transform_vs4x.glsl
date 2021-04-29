@@ -70,7 +70,7 @@ void main()
 	vTangentBasis_view = t.modelViewMatInverseTranspose * mat4(aTangent, 0.0, aBitangent, 0.0, aNormal, 0.0, vec4(0.0));
 	vTangentBasis_view[3] = t.modelViewMat * aPosition;
 	gl_Position = t.modelViewProjectionMat * aPosition;
-	
+
 	vTexcoord_atlas = t.atlasMat * aTexcoord;
 
 	vVertexID = gl_VertexID;

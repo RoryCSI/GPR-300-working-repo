@@ -262,8 +262,8 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 		sceneObject->sceneHierarchyIndex, sceneObject_parent->sceneHierarchyIndex, "obj_torus");
 	a3demo_resetSceneObjectData(sceneObjectData);
 	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
-	sceneObjectData->position.x = a3real_zero;
-	sceneObjectData->position.y = -a3real_six;
+	sceneObjectData->position.x = -a3real_six;
+	sceneObjectData->position.y = a3real_zero;
 	sceneObjectData->position.z = +a3real_four;
 	sceneObjectData->scale.x = a3real_two;
 	sceneObjectData->scaleMode = a3scale_uniform;
@@ -277,7 +277,7 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
 	sceneObjectData->position.x = a3real_zero;
 	sceneObjectData->position.y = -a3real_six;
-	sceneObjectData->position.z = -a3real_two;
+	sceneObjectData->position.z = +a3real_two + a3real_half;
 	sceneObjectData->scale.x = a3real_two;
 	sceneObjectData->scaleMode = a3scale_uniform;
 

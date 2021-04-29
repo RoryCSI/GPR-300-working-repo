@@ -48,7 +48,6 @@ uniform sampler2D uTex_hm;
 
 uniform float uTime;
 
-
 const float waveAmplitude = 2;
 const float waveSpeed = 0.5;
 const float waveLength = 0.5;

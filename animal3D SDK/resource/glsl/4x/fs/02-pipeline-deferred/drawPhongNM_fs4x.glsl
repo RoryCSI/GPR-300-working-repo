@@ -51,7 +51,8 @@ const vec4 kEyePos = vec4(0.0, 0.0, 0.0, 1.0);
 layout (location = 0) out vec4 rtFragColor;
 layout (location = 1) out vec4 rtFragNormal;
 layout (location = 2) out vec4 rtFragDiffuse;
-layout (location = 3) out vec4 rtFragSpecular;
+//layout (location = 3) out vec4 rtFragSpecular;
+layout (location = 3) out vec4 rtFragPosition;
 
 void calcPhongPoint(out vec4 diffuseColor, out vec4 specularColor, in vec4 eyeVec,
 	in vec4 fragPos, in vec4 fragNrm, in vec4 fragColor,
@@ -59,9 +60,6 @@ void calcPhongPoint(out vec4 diffuseColor, out vec4 specularColor, in vec4 eyeVe
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-//	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
-
 	vec4 diffuseColor = vec4(0.0), specularColor = diffuseColor, dd, ds;
 	
 	// view-space tangent basis
@@ -99,7 +97,8 @@ void main()
 	// MRT
 	rtFragNormal = vec4(nrm_view.xyz * 0.5 + 0.5, 1.0);
 	rtFragDiffuse = sample_dm * diffuseColor;
-	rtFragSpecular = sample_sm * specularColor;
+	//rtFragSpecular = sample_sm * specularColor;
+	rtFragPosition = vTexcoord_atlas;
 
 	
 	// DEBUGGING

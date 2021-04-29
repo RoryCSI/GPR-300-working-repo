@@ -99,7 +99,7 @@ struct a3_DemoStateShaderProgram
 			uTex_nm, uTex_hm,			// named texture map handles for intermediate shading
 			uTex_ramp_dm, uTex_ramp_sm,	// named texture map handles for ramps
 			uTex_shadow, uTex_project,	// named texture map handles for projection
-			uImage00, uImage01, uImage02, uImage03, uImage04, uImage05, uImage06, uImage07;	// generic texture handles
+			uImage00, uImage01, uImage02, uImage03, uImage04, uImage05, uImage06, uImage07, uImage08;	// generic texture handles
 	};
 
 	// uniform blocks
