@@ -568,7 +568,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:passthru-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"passthru_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-col-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"passColor_transform_instanced_vs4x.glsl" } } },
 			// 00-common
-			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/e/passTexcoord_transform_vs4x.glsl" } } },
+			{ { { 0 },	"shdr-vs:pass-tex-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/passTexcoord_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-trans",			a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/e/passTangentBasis_transform_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tex-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/e/passTexcoord_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"00-common/e/passTangentBasis_transform_instanced_vs4x.glsl" } } },
@@ -604,9 +604,9 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-fs:draw-col-unif",			a3shader_fragment,	1,{ A3_DEMO_FS"drawColorUnif_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-col-attr",			a3shader_fragment,	1,{ A3_DEMO_FS"drawColorAttrib_fs4x.glsl" } } },
 			// 00-common
-			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"00-common/e/drawTexture_fs4x.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-tex",					a3shader_fragment,	1,{ A3_DEMO_FS"00-common/drawTexture_fs4x.glsl" } } },
 			{ { { 0 },	"shdr-fs:draw-Lambert",				a3shader_fragment,	2,{ A3_DEMO_FS"00-common/e/drawLambert_fs4x.glsl",
-																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },
+																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },
 			{ { { 0 },	"shdr-fs:draw-Phong",				a3shader_fragment,	2,{ A3_DEMO_FS"00-common/e/drawPhong_fs4x.glsl",
 																					A3_DEMO_FS"00-common/e/utilCommon_fs4x.glsl",} } },
 			// 01-pipeline
@@ -852,7 +852,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 	// tangent basis waves
 	currentDemoProg = demoState->prog_drawTangentBasisWaves;
-	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tb-LOD");
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-tb-Waves");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_ubo_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.tessTriTangentBasis_tcs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_wave_displace_tes->shader);
@@ -862,6 +862,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	// blending
 	currentDemoProg = demoState->prog_drawSSR;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:post-SSR");
+	//a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_ubo_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSSR_fs->shader);
 
@@ -936,6 +937,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 		a3demo_setUniformDefaultInteger(currentDemoProg, uImage05, defaultTexUnits + 5);
 		a3demo_setUniformDefaultInteger(currentDemoProg, uImage06, defaultTexUnits + 6);
 		a3demo_setUniformDefaultInteger(currentDemoProg, uImage07, defaultTexUnits + 7);
+		a3demo_setUniformDefaultInteger(currentDemoProg, uImage08, defaultTexUnits + 8);
 
 		// common general
 		a3demo_setUniformDefaultInteger(currentDemoProg, uIndex, defaultInt);

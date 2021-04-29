@@ -1,4 +1,3 @@
-
 /*
 	Copyright 2011-2021 Daniel S. Buckstein
 	Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +14,6 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
-	///////Modified by Rory Beebout///////
 	
 	passTexcoord_transform_vs4x.glsl
 	Calculate final position and pass atlas texture coordinate.
@@ -24,20 +22,21 @@
 #version 450
 
 layout (location = 0) in vec4 aPosition;
-layout (location = 8) in vec2 aTexcoord;
+layout (location = 8) in vec4 aTexcoord;
 
-uniform mat4 uMVP;
+uniform mat4 uMVP, uAtlas;
+
+out vec4 vTexcoord_atlas;
 
 flat out int vVertexID;
 flat out int vInstanceID;
 
-out vec2 vTexcoord;
-
 void main()
 {
-	vTexcoord = aTexcoord;
-
+	// DUMMY OUTPUT: directly assign input position to output position
+	//gl_Position = aPosition;
 	gl_Position = uMVP * aPosition;
+	vTexcoord_atlas = uAtlas * aTexcoord;
 
 	vVertexID = gl_VertexID;
 	vInstanceID = gl_InstanceID;
