@@ -62,9 +62,6 @@ uniform float uTime;
 
 void main()
 {
-	// DUMMY OUTPUT: directly assign input position to output position
-	//gl_Position = aPosition;
-	
 	sModelMatrixStack t = uModelMatrixStack[uIndex];
 	
 	vTangentBasis_view = t.modelViewMatInverseTranspose * mat4(aTangent, 0.0, aBitangent, 0.0, aNormal, 0.0, vec4(0.0));
