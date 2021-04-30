@@ -329,7 +329,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3_DemoMode5_Final_RenderTarget const renderTarget = demoMode->renderTarget[renderPass],
 		renderTargetCount = demoMode->renderTargetCount[renderPass];
 
-	
+
 
 	// final model matrix and full matrix stack
 	a3mat4 projectionMat = activeCamera->projectorMatrixStackPtr->projectionMat;
@@ -600,6 +600,8 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, fsq.mm);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
+	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, projectionMat.mm);
+	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, projectionMatInv.mm);
 
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, a3vec4_one.v);
 	a3framebufferBindColorTexture(writeFBO[final_renderPassBlurFinal], a3tex_unit00, 0);	// scene depth
@@ -694,8 +696,8 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 
 		if (demoState->displayTangentBases || demoState->displayWireframe)
 		{
-			const a3i32 flag[1] = { demoState->displayTangentBases * 3 + demoState->displayWireframe * 4 };
-			const a3f32 size[1] = { 0.0625f };
+			const a3i32 flag[1] = {demoState->displayTangentBases * 3 + demoState->displayWireframe * 4};
+			const a3f32 size[1] = {0.0625f};
 
 			for (currentSceneObject = demoMode->obj_teapot, endSceneObject = demoMode->obj_ground;
 				currentSceneObject <= endSceneObject; ++currentSceneObject)

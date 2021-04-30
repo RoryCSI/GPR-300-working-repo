@@ -43,6 +43,7 @@ uniform int uCount;
 uniform vec4 uColor;
 
 uniform float uSize;
+uniform mat4 uP;
 
 uniform sampler2D uTex_dm, uTex_sm, uTex_nm, uTex_hm;
 
@@ -57,6 +58,13 @@ layout (location = 3) out vec4 rtFragPosition;
 void calcPhongPoint(out vec4 diffuseColor, out vec4 specularColor, in vec4 eyeVec,
 	in vec4 fragPos, in vec4 fragNrm, in vec4 fragColor,
 	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor);
+
+	const mat4 bias = mat4(
+	0.5, 0.0, 0.0, 0.0,
+	0.0, 0.5, 0.0, 0.0,
+	0.0, 0.0, 0.5, 0.0,
+	0.5, 0.5, 0.5, 1.0
+	);
 
 void main()
 {
@@ -98,7 +106,7 @@ void main()
 	rtFragNormal = vec4(nrm_view.xyz * 0.5 + 0.5, 1.0);
 	rtFragDiffuse = sample_dm * diffuseColor;
 	//rtFragSpecular = sample_sm * specularColor;
-	rtFragPosition = vTexcoord_atlas;
+	rtFragPosition = pos_view;
 
 	
 	// DEBUGGING

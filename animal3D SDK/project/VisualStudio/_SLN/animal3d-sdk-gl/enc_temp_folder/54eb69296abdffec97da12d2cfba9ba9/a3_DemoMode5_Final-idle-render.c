@@ -231,9 +231,10 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		0,								// camera
 		demoState->draw_unit_box,		// skybox
 		0,
-		demoState->draw_teapot_morph,
-		demoState->draw_unit_plane_z,
+		demoState->draw_teapot,
 		demoState->draw_unit_torus,
+		demoState->draw_teapot,
+		demoState->draw_unit_plane_z,
 	};
 
 	// textures (diffuse, specular, normal, height)
@@ -241,7 +242,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		0, 0, 0, 0, 0,
 		demoState->texSet_stone,	// teapot
 		demoState->texSet_stone,	// torus
-		demoState->texSet_earth,	// teapot2
+		demoState->texSet_stone,	// teapot2
 		demoState->texSet_earth,	// ground
 	};
 
@@ -249,18 +250,21 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	const a3f32 htScale[finalMaxCount_sceneObject] = {
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		0.010f,	// teapot
-		0.3f,	// ground
 		0.3f,	// torus
+		0.01f,	// teapot 2
+		0.3f,	// ground
 	};
 	// tessellation levels
 	const a3f32 tessLevel[finalMaxCount_sceneObject][4] = {
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 2.0f, 2.0f, 2.0f, 3.0f },
-		{ 4.0f, 4.0f, 4.0f, 5.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//1
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//2
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//3
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//4
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//5
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//6 teapot
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//7 torus
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//8 teapot2
+		{ 4.0f, 4.0f, 4.0f, 5.0f },//9 ground
 	}, tessLevelCurve[1][2] = {
 		{ 1.0f, 32.0f }
 	};
@@ -269,9 +273,9 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	const a3_DemoStateShaderProgram* renderProgram[final_renderMode_max][finalMaxCount_sceneObject] = {
 		{
 			0, 0, 0, 0, 0,						// 1, 2, 3, 4, 5,
-			demoState->prog_drawPhongNM_ubo,	// 6 Teapot
-			demoState->prog_drawPhongNM_ubo,	// 7 Torus
-			demoState->prog_drawPhongNM_ubo,	// 8 Teapot
+			demoState->prog_drawPhongPOM,	// 6 Teapot
+			demoState->prog_drawLambert,		// 7 Torus
+			demoState->prog_drawPhongPOM,		// 8 Teapot
 			demoState->prog_drawPhongWaves,		// 9 Ground
 		},
 	};
@@ -325,7 +329,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3_DemoMode5_Final_RenderTarget const renderTarget = demoMode->renderTarget[renderPass],
 		renderTargetCount = demoMode->renderTargetCount[renderPass];
 
-	
+
 
 	// final model matrix and full matrix stack
 	a3mat4 projectionMat = activeCamera->projectorMatrixStackPtr->projectionMat;
@@ -596,6 +600,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, fsq.mm);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
+	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, projectionMat.mm);
 
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, a3vec4_one.v);
 	a3framebufferBindColorTexture(writeFBO[final_renderPassBlurFinal], a3tex_unit00, 0);	// scene depth
@@ -690,8 +695,8 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 
 		if (demoState->displayTangentBases || demoState->displayWireframe)
 		{
-			const a3i32 flag[1] = { demoState->displayTangentBases * 3 + demoState->displayWireframe * 4 };
-			const a3f32 size[1] = { 0.0625f };
+			const a3i32 flag[1] = {demoState->displayTangentBases * 3 + demoState->displayWireframe * 4};
+			const a3f32 size[1] = {0.0625f};
 
 			for (currentSceneObject = demoMode->obj_teapot, endSceneObject = demoMode->obj_ground;
 				currentSceneObject <= endSceneObject; ++currentSceneObject)
