@@ -209,8 +209,9 @@ struct a3_DemoMode5_Final
 				obj_skybox[1],
 				obj_skeleton[1],
 				obj_teapot[1],
-				obj_ground[1],
-				obj_torus[1];
+				obj_torus[1],
+				obj_teapot2[1],
+				obj_ground[1];
 		};
 	};
 	a3_SceneObjectData sceneObjectData[finalMaxCount_sceneObject];

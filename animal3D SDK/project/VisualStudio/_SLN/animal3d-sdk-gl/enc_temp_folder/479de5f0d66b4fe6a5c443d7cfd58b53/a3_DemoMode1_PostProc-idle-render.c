@@ -200,6 +200,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 		demoState->tex_skybox_clouds,	// skybox
 		demoState->tex_earth_dm,		// objects
 		demoState->tex_mars_dm,
+		demoState->tex_stone_dm,
 		demoState->tex_sun_dm,
 		demoState->tex_checker,
 		demoState->tex_checker,
@@ -212,6 +213,7 @@ void a3postproc_render(a3_DemoState const* demoState, a3_DemoMode1_PostProc cons
 		0,								// skybox
 		demoState->tex_earth_sm,		// objects
 		demoState->tex_mars_sm,
+		demoState->tex_stone_dm,
 		demoState->tex_sun_dm,
 		demoState->tex_checker,
 		demoState->tex_checker,

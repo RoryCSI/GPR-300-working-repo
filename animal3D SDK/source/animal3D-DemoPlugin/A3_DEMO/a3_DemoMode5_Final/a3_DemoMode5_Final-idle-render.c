@@ -231,35 +231,40 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		0,								// camera
 		demoState->draw_unit_box,		// skybox
 		0,
-		demoState->draw_teapot_morph,
-		demoState->draw_unit_plane_z,
+		demoState->draw_teapot,
 		demoState->draw_unit_torus,
+		demoState->draw_teapot,
+		demoState->draw_unit_plane_z,
 	};
 
 	// textures (diffuse, specular, normal, height)
 	const a3_Texture* const* textureSet[finalMaxCount_sceneObject] = {
 		0, 0, 0, 0, 0,
 		demoState->texSet_stone,	// teapot
-		demoState->texSet_stone,	// ground
-		demoState->texSet_earth,	// teapot
+		demoState->texSet_stone,	// torus
+		demoState->texSet_stone,	// teapot2
+		demoState->texSet_earth,	// ground
 	};
 
 	// height map scale
 	const a3f32 htScale[finalMaxCount_sceneObject] = {
 		0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 		0.010f,	// teapot
-		0.3f,	// ground
 		0.3f,	// torus
+		0.01f,	// teapot 2
+		0.3f,	// ground
 	};
 	// tessellation levels
 	const a3f32 tessLevel[finalMaxCount_sceneObject][4] = {
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 0.0f, 0.0f, 0.0f, 0.0f },
-		{ 2.0f, 2.0f, 2.0f, 3.0f },
-		{ 4.0f, 4.0f, 4.0f, 5.0f },
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//1
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//2
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//3
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//4
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//5
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//6 teapot
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//7 torus
+		{ 0.0f, 0.0f, 0.0f, 0.0f },//8 teapot2
+		{ 4.0f, 4.0f, 4.0f, 5.0f },//9 ground
 	}, tessLevelCurve[1][2] = {
 		{ 1.0f, 32.0f }
 	};
@@ -268,9 +273,10 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	const a3_DemoStateShaderProgram* renderProgram[final_renderMode_max][finalMaxCount_sceneObject] = {
 		{
 			0, 0, 0, 0, 0,						// 1, 2, 3, 4, 5,
-			demoState->prog_drawPhongNM_ubo, // 6
-			demoState->prog_drawPhongWaves,		// 7
-			demoState->prog_drawPhongNM_ubo,
+			demoState->prog_drawPhongPOM,	// 6 Teapot
+			demoState->prog_drawLambert,		// 7 Torus
+			demoState->prog_drawPhongPOM,		// 8 Teapot
+			demoState->prog_drawPhongWaves,		// 9 Ground
 		},
 	};
 	// overlay shader programs
@@ -280,6 +286,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 			demoState->prog_drawTangentBasisPOM_morph,
 			demoState->prog_drawTangentBasisWaves,
 			demoState->prog_drawTangentBasisWaves,
+			demoState->prog_drawTangentBasisWaves,
 		},
 	};
 	// drawable render function
@@ -287,8 +294,9 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		{
 			0, 0, 0, 0, 0,
 			a3vertexDrawableActivateAndRender,
-			a3finalVertexDrawableRenderTriPatches,
 			a3vertexDrawableActivateAndRender,
+			a3vertexDrawableActivateAndRender,
+			a3finalVertexDrawableRenderTriPatches,
 		},
 	};
 	// lights
@@ -388,6 +396,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		//	- shared animation data
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, projectionMat.mm);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, projectionMatInv.mm);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionMatInv.mm);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, hueCount, rgba4->v);

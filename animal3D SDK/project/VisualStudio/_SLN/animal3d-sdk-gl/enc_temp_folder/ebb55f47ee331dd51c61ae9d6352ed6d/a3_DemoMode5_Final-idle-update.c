@@ -292,6 +292,9 @@ void a3final_update_scene(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode,
 	a3demo_updateSceneObject(demoMode->obj_teapot, 0);
 	a3demo_updateSceneObjectStack(demoMode->obj_teapot, projector);
 
+	a3demo_updateSceneObject(demoMode->obj_torus, 0);
+	a3demo_updateSceneObjectStack(demoMode->obj_torus, projector);
+
 	a3demo_updateSceneObject(demoMode->obj_ground, 0);
 	a3demo_updateSceneObjectStack(demoMode->obj_ground, projector);
 

@@ -154,10 +154,13 @@ void a3final_loadValidate(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode)
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
 	a3demo_initSceneObject(demoMode->obj_teapot, 5,
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
-	a3demo_initSceneObject(demoMode->obj_ground, 6,
+	a3demo_initSceneObject(demoMode->obj_torus, 6,
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
-	a3demo_initSceneObject(demoMode->obj_torus, 7,
+	a3demo_initSceneObject(demoMode->obj_teapot2, 7,
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
+	a3demo_initSceneObject(demoMode->obj_ground, 8,
+		demoMode->sceneObjectData, demoMode->modelMatrixStack);
+
 
 	// initialize projector pointers
 	a3demo_initProjector(demoMode->proj_camera_main,
@@ -277,6 +280,18 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
 	sceneObjectData->position.x = a3real_zero;
 	sceneObjectData->position.y = -a3real_six;
+	sceneObjectData->position.z = -a3real_two;
+	sceneObjectData->scale.x = a3real_two;
+	sceneObjectData->scaleMode = a3scale_uniform;
+
+	sceneObject = demoMode->obj_teapot2;
+	sceneObjectData = sceneObject->dataPtr;
+	a3hierarchySetNode(demoMode->hierarchy_scene,
+		sceneObject->sceneHierarchyIndex, sceneObject_parent->sceneHierarchyIndex, "obj_teapot2");
+	a3demo_resetSceneObjectData(sceneObjectData);
+	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
+	sceneObjectData->position.x = a3real_zero;
+	sceneObjectData->position.y = a3real_six;
 	sceneObjectData->position.z = -a3real_two;
 	sceneObjectData->scale.x = a3real_two;
 	sceneObjectData->scaleMode = a3scale_uniform;
