@@ -421,5 +421,8 @@
     <None Include="..\..\..\resource\glsl\4x\fs\05-final\drawSSR.glsl">
       <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-final</Filter>
     </None>
+    <None Include="..\..\..\resource\glsl\4x\fs\05-final\postSSRComposite.glsl">
+      <Filter>Resource Files\A3_DEMO\glsl\4x\fs\05-final</Filter>
+    </None>
   </ItemGroup>
 </Project>
