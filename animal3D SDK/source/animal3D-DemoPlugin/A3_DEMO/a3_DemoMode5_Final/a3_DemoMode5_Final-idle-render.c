@@ -397,6 +397,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, projectionMat.mm);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, projectionMatInv.mm);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionMatInv.mm);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVPB_other, 1, viewProjectionMat.mm);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uAtlas, 1, a3mat4_identity.mm);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, a3mat4_identity.mm);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, hueCount, rgba4->v);
@@ -604,9 +605,9 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP_inv, 1, projectionMatInv.mm);
 
 	a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, a3vec4_one.v);
-	a3framebufferBindColorTexture(writeFBO[final_renderPassBlurFinal], a3tex_unit00, 0);	// scene depth
-	a3framebufferBindDepthTexture(writeFBO[final_renderPassScene], a3tex_unit04);	// scene depth
-	a3framebufferBindColorTexture(writeFBO[final_renderPassScene], a3tex_unit06, 0);	// scene color
+	a3framebufferBindColorTexture(writeFBO[final_renderPassBlurFinal], a3tex_unit00, 0);	// scene color
+	a3framebufferBindDepthTexture(writeFBO[final_renderPassScene], a3tex_unit04);		// scene depth
+	a3framebufferBindColorTexture(writeFBO[final_renderPassBlurFinal], a3tex_unit06, 0);	// scene color
 	a3framebufferBindColorTexture(writeFBO[final_renderPassScene], a3tex_unit05, 1);	// scene normals
 	a3framebufferBindColorTexture(writeFBO[final_renderPassScene], a3tex_unit07, 2);	// scene diffuse
 	a3framebufferBindColorTexture(writeFBO[final_renderPassScene], a3tex_unit08, 3);	// scene specular

@@ -24,11 +24,6 @@
 
 #define MAX_LIGHTS 1024
 
-//in vbVertexData {
-//	mat4 vTangentBasis_view;
-//	vec4 vTexcoord_atlas;
-//};
-
 in vec4 vTexcoord_atlas;
 
 struct sPointLight
@@ -59,98 +54,113 @@ layout (location = 1) out vec4 rtFragNormal;
 
 uniform mat4 uP;
 uniform mat4 uP_inv;
+uniform mat4 uPB_inv;
+uniform mat4 uMVPB_other;
+uniform mat4 uAtlas;
 
 void calcPhongPoint(out vec4 diffuseColor, out vec4 specularColor, in vec4 eyeVec,
 	in vec4 fragPos, in vec4 fragNrm, in vec4 fragColor,
 	in vec4 lightPos, in vec4 lightRadiusInfo, in vec4 lightColor);
 
-struct RayTraceOutput
-{
-	bool Hit;
-	vec2 UV;
-};
+//refs
+// - https://community.khronos.org/t/screen-space-reflections/69987
+// - https://stackoverflow.com/questions/53457581/screen-space-reflections-artifacts
+// - https://gamedev.stackexchange.com/questions/138717/screen-space-reflections-not-tracing-correctly-glsl
 
-RayTraceOutput raytrace(in vec4 reflPosition, in vec4 reflDir)
-{
-	// The Current Position in 3D
-	vec4 curPos = vec4(0);
- 
-	// The Current UV
-	vec4 curUV = vec4(0);
- 
-	// The Current Length
-	float curLength = 1;
+const int binarySearchCount = 10;
+const int rayMarchCount = 30;
+const float step = 0.05;
+const float LLimiter = 0.2;
+const float minRayStep = 0.2;
 
-	RayTraceOutput ray;
-	ray.Hit = false;
-	ray.UV = curUV.xy;
+vec3 getPosition(in vec2 texCoord) {
+    float z = texture(uImage04, texCoord).w;
 
-	// Now loop
-	int loops = 64;
-    for (int i = 0; i < loops; i++)
-    {
-        // Has it hit anything yet
-        if (ray.Hit == false)
-        {
-            // Update the Current Position of the Ray
-           curPos = reflPosition + reflDir * curLength ;
-            // Get the UV Coordinates of the current Ray
-            curUV = uP * curPos;
-            // The Depth of the Current Pixel
-            float curDepth = texture(uImage04, curUV.xy).r;
-			int SAMPLE_COUNT = 64;
-			int RAND_SAMPLES[] = {1,1,1,1,1,1,1};
-			int DepthCheckBias = 64;
-			for (int i = 0; i < SAMPLE_COUNT; i++)
-            {
-                if (abs(curUV .z - curDepth) < DepthCheckBias)
-                {
-                    // If it's hit something, then return the UV position
-                    ray.Hit = true;
-                    ray.UV = curUV.xy;
-                    break;
-                }
-                //curDepth = texture(uImage04, curUV.xy + (RAND_SAMPLES[i])).r;
-            }
-
-            // Get the New Position and Vector
-            vec4 newPos = texture(uImage08, curUV.xy);// curDepth );
-			newPos.z = curDepth;
-            curLength = length(reflPosition - newPos);
-        }
-    }
-	return ray;
+    return vec3(texCoord, texture(uImage04, texCoord).z);
 }
 
-void main() 
-{
-	float depth = texture(uImage04, vTexcoord_atlas.xy).z;
-	
-	//vec4 reflPosition = texture(uImage08, vTexcoord_atlas.xy);
-	//reflPosition = reflPosition/reflPosition.w;
-	vec4 reflPosition = vTexcoord_atlas * uP;
-	reflPosition.z = texture(uImage04, vTexcoord_atlas.xy).r;
-	reflPosition = reflPosition/reflPosition.w;
+vec2 binarySearch(inout vec3 dir, inout vec3 hitCoord, inout float dDepth) {
+    float depth;
 
-	vec4 normal = texture(uImage05, vTexcoord_atlas.xy);
-	//normal = 2.0 * normal - 1.0;
+    vec4 projectedCoord;
 
-	vec4 viewDir = normalize(reflPosition - kEyePos);
-	vec4 reflectDir = normalize(reflect(viewDir, normalize(normal)));
+    for(int i = 0; i < binarySearchCount; i++) {
+        projectedCoord = uP * vec4(hitCoord, 1.0);
+        projectedCoord.xy /= projectedCoord.w;
+        projectedCoord.xy = projectedCoord.xy * 0.5 + 0.5;
 
-	RayTraceOutput ray = raytrace(reflPosition, reflectDir);
-	
-		if (ray.Hit == true)
-		{
-            // Fade at edges
-			int EdgeCutOff = 4;
-			float amount = 1;
-			if (ray.UV.y < EdgeCutOff * 2)
-				amount *= (ray.UV.y / EdgeCutOff / 2);
+        depth = getPosition(projectedCoord.xy).z;
 
-			rtFragColor = vec4(ray.UV.xy, 0, amount);
-		}
+        dDepth = hitCoord.z - depth;
 
-	//rtFragColor = normal;// * vec4(1,0,0,1);
-	//rtFragColor = reflPosition;
+        dir *= 0.5;
+        if(dDepth > 0.0)
+            hitCoord += dir;
+        else
+            hitCoord -= dir;    
+    }
+
+    projectedCoord = uP * vec4(hitCoord, 1.0);
+    projectedCoord.xy /= projectedCoord.w;
+    projectedCoord.xy = projectedCoord.xy * 0.5 + 0.5;
+
+    return vec2(projectedCoord.xy);
+}
+
+vec2 rayCast(vec3 dir, inout vec3 hitCoord, out float dDepth) {
+    dir *= step;
+
+    for (int i = 0; i < rayMarchCount; i++) {
+        hitCoord += dir;
+
+        vec4 projectedCoord = uP * vec4(hitCoord, 1.0);
+        projectedCoord.xy /= projectedCoord.w;
+        projectedCoord.xy = projectedCoord.xy * 0.5 + 0.5; 
+
+        float depth = getPosition(projectedCoord.xy).z;
+        dDepth = hitCoord.z - depth;
+
+        if((dir.z - dDepth) < 1.2 && dDepth <= 0.0) return binarySearch(dir, hitCoord, dDepth);
+    }
+
+    return vec2(-1.0);
+}
+
+void main() {
+    vec2 texCoord = (inverse(uAtlas) * vTexcoord_atlas).xy;
+
+    float reflectionStrength = texture(uImage08, texCoord).r;
+    //reflectionStrength = 0.5;
+
+    if (reflectionStrength == 0) {
+        rtFragColor = texture(uImage06, texCoord);
+        return;
+    }
+
+    vec3 normal = texture(uImage05, texCoord).xyz;
+    vec3 viewPos = -getPosition(texCoord);
+
+
+    // Reflection vector
+    vec3 reflected = normalize(reflect(normalize(viewPos), normalize(normal)));
+
+    // Ray cast
+    vec3 hitPos = viewPos;
+    float dDepth; 
+    vec2 coords = rayCast(reflected * max(-viewPos.z, minRayStep), hitPos, dDepth);
+
+    //float L = length(getPosition(coords) - viewPos);
+    //L = clamp(L * LLimiter, 0, 1);
+    float error = 1;// - L;
+
+    vec4 blueColor = vec4(0,0.1,0.2,1);
+    vec3 color = texture(uImage06, coords.xy).rgb * error;
+
+    if (coords.xy != vec2(-1.0)) {
+        rtFragColor = mix(texture(uImage06, texCoord), vec4(color, 1.0), reflectionStrength);
+        return;
+    }
+    //rtFragColor = mix(texture(uImage06, texCoord), blueColor, reflectionStrength);
+    //rtFragColor = texture(uImage08, vTexcoord_atlas.xy);
+    
 }

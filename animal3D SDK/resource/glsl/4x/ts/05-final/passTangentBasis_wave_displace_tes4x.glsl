@@ -47,8 +47,9 @@ out vbVertexData {
 uniform sampler2D uTex_hm;
 
 uniform float uTime;
+uniform mat4 uP;
 
-const float waveAmplitude = 2;
+const float waveAmplitude = 0.01;
 const float waveSpeed = 0.5;
 const float waveLength = 0.5;
 void main()
@@ -103,9 +104,9 @@ void main()
     //float waveHeight = 2 * sin(k * ((pos.x/pos_view.x) - 1 * uTime));
 	float waveDisplaceY = waveAmplitude * sin(f);
 
-    //pos += normal * (heightmapDisplaceY * 0.3f) * (waveDisplaceY * 0.6f);
+    pos += normal * (heightmapDisplaceY * 0.3f) * (waveDisplaceY * 0.6f);
 
-	pos += normal * (waveDisplaceY * 0.6f);
+	pos += normal * (waveDisplaceY * 0.3f);
 
 	//TO-DO:
 	// -> Correct Tangent, Bitangent, Normal for wave positions.
