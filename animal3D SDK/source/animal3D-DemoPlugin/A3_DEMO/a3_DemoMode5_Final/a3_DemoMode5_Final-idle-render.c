@@ -431,26 +431,6 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	if (demoState->stencilTest)
 		glDisable(GL_STENCIL_TEST);
 
-
-	// draw light volumes
-	currentDemoProgram = demoState->prog_drawPhongPointLight_instanced;
-	a3shaderProgramActivate(currentDemoProgram->program);
-	a3shaderUniformBufferActivate(demoState->ubo_mvp, demoProg_blockTransformStack);
-	a3shaderUniformBufferActivate(demoState->ubo_light, demoProg_blockLight);
-	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uPB_inv, 1, projectionBiasMatInv.mm);
-	a3framebufferBindDepthTexture(currentWriteFBO, a3tex_unit04);		// depth
-	a3framebufferBindColorTexture(currentWriteFBO, a3tex_unit05, 1);	// normals
-
-	currentWriteFBO = writeFBO[final_renderPassLights];
-	a3framebufferActivate(currentWriteFBO);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	a3demo_enableAdditiveBlending();
-	glCullFace(GL_FRONT);
-	a3vertexDrawableActivateAndRenderInstanced(demoState->draw_unit_sphere, finalMaxCount_pointLight);
-	glCullFace(GL_BACK);
-	glDisable(GL_BLEND);
-
 	//-------------------------------------------------------------------------
 	// COMPOSITION
 	//	- activate target framebuffer

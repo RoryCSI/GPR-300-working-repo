@@ -160,6 +160,8 @@ void a3final_loadValidate(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode)
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
 	a3demo_initSceneObject(demoMode->obj_ground, 8,
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
+	a3demo_initSceneObject(demoMode->obj_light_second, 9,
+		demoMode->sceneObjectData, demoMode->modelMatrixStack);
 
 
 	// initialize projector pointers
@@ -170,6 +172,11 @@ void a3final_loadValidate(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode)
 	// initialize point light pointers
 	a3demo_initPointLight(demoMode->light_point_main,
 		demoMode->obj_light_main->sceneHierarchyIndex, 0,
+		demoMode->pointLightData, demoMode->sceneObject);
+
+	// initialize point light pointers
+	a3demo_initPointLight(demoMode->light_point_second,
+		demoMode->obj_light_second->sceneHierarchyIndex, 0,
 		demoMode->pointLightData, demoMode->sceneObject);
 
 	// initialize cameras dependent on viewport
@@ -303,8 +310,8 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	a3demo_resetSceneObjectData(sceneObjectData);
 	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
 	sceneObjectData->position.z = -a3real_two;
-	sceneObjectData->scale.x = a3real_fortyfive;
-	sceneObjectData->scale.y = a3real_fortyfive;
+	sceneObjectData->scale.x = a3real_fortyfive * 5;
+	sceneObjectData->scale.y = a3real_fortyfive * 5;
 	sceneObjectData->scale.z = a3real_epsilon;
 	sceneObjectData->scaleMode = a3scale_nonuniform;
 
@@ -328,6 +335,15 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	pointLightData->worldPos = pointLight->sceneObjectPtr->dataPtr->position;
 	a3demo_setPointLightRadius(pointLightData, a3real_onehundred*3);
 
+	/*pointLight = demoMode->light_point_second;
+	pointLightData = pointLight->dataPtr;
+	a3demo_resetPointLightData(pointLightData);
+	pointLightData->worldPos = pointLight->sceneObjectPtr->dataPtr->position;
+	a3real3Set(pointLightData->worldPos.v, 0, 0, 1);
+	a3real3Set(pointLightData->color.v,
+		a3randomNormalized(), a3randomNormalized(), a3randomNormalized());
+	a3demo_setPointLightRadius(pointLightData, a3real_onehundred * 0);
+	*/
 
 	// set up animation
 	a3final_initKeyframeController(demoMode->animMorphTeapot, 5, 0, 2.0f);

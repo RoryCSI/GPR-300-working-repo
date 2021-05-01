@@ -298,6 +298,8 @@ void a3final_update_scene(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode,
 	a3_ProjectorComponent* projector = demoMode->proj_camera_main;
 
 	a3_PointLightData* pointLightData;
+	a3mat4* pointLightMVP;
+	a3real const ratio = a3trigFaceToPointRatio(a3real_threesixty, a3real_oneeighty, 32, 24);
 	a3ui32 i;
 
 	// update camera
@@ -335,14 +337,23 @@ void a3final_update_scene(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode,
 	a3demo_updateSceneObject(demoMode->obj_ground, 0);
 	a3demo_updateSceneObjectStack(demoMode->obj_ground, projector);
 
+	// update light
+	a3demo_updateSceneObject(demoMode->obj_light_second, 1);
+	a3demo_updateSceneObjectStack(demoMode->obj_light_second, projector);
+
 	// update light positions and transforms
-	for (i = 0, pointLightData = demoMode->pointLightData;
+	for (i = 0, pointLightData = demoMode->pointLightData, pointLightMVP = demoMode->pointLightMVP;
 		i < finalMaxCount_pointLight;
-		++i, ++pointLightData)
+		++i, ++pointLightData, ++pointLightMVP)
 	{
 		a3real4Real4x4Product(pointLightData->position.v,
 			projector->sceneObjectPtr->modelMatrixStackPtr->modelMatInverse.m,
 			pointLightData->worldPos.v);
+
+		// update and transform light matrix
+		a3real4x4SetScale(pointLightMVP->m, pointLightData->radius * ratio);
+		pointLightMVP->v3 = pointLightData->position;
+		a3real4x4Concat(projector->projectorMatrixStackPtr->projectionMat.m, pointLightMVP->m);
 	}
 }
 

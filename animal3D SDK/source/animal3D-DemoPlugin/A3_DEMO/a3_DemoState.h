@@ -100,7 +100,7 @@ enum a3_DemoState_ObjectMaxCount
 {
 	demoStateMaxCount_timer = 1,
 
-	demoStateMaxCount_drawDataBuffer = 1,
+	demoStateMaxCount_drawDataBuffer = 2,
 	demoStateMaxCount_vertexArray = 4,
 	demoStateMaxCount_drawable = 16,
 
@@ -222,7 +222,8 @@ struct a3_DemoState
 		a3_VertexBuffer drawDataBuffer[demoStateMaxCount_drawDataBuffer];
 		struct {
 			a3_VertexBuffer
-				vbo_staticSceneObjectDrawBuffer[1];			// buffer to hold all data for static scene objects (e.g. grid)
+				vbo_staticSceneObjectDrawBuffer[1],			// buffer to hold all data for static scene objects (e.g. grid)
+				vbo_particleBuffer[1];
 		};
 	};
 

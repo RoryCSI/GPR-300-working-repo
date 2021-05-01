@@ -120,9 +120,9 @@ enum a3_DemoMode5_Final_RenderTarget
 // maximum unique objects
 enum a3_DemoMode5_Final_ObjectMaxCount
 {
-	finalMaxCount_sceneObject = 9,
+	finalMaxCount_sceneObject = 10,
 	finalMaxCount_projector = 1,	// how many of the above behave as projectors
-	finalMaxCount_pointLight = 1,	// how many of the above behave as lights
+	finalMaxCount_pointLight = 2,	// how many of the above behave as lights
 
 	finalMaxCount_skeletonPose = 4,
 	finalMaxCount_skeletonJoint = 128,
@@ -221,7 +221,8 @@ struct a3_DemoMode5_Final
 				obj_teapot[1],
 				obj_torus[1],
 				obj_sphere[1],
-				obj_ground[1];
+				obj_ground[1],
+				obj_light_second[1];
 		};
 	};
 	a3_SceneObjectData sceneObjectData[finalMaxCount_sceneObject];
@@ -243,10 +244,12 @@ struct a3_DemoMode5_Final
 		a3_PointLightComponent pointLight[finalMaxCount_pointLight];
 		struct {
 			a3_PointLightComponent
-				light_point_main[1];
+				light_point_main[1],
+				light_point_second[1];
 		};
 	};
 	a3_PointLightData pointLightData[finalMaxCount_pointLight];
+	a3mat4 pointLightMVP[finalMaxCount_pointLight];
 };
 
 
