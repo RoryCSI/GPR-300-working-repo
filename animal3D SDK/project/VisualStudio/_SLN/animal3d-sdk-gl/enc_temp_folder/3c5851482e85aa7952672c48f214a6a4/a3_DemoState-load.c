@@ -553,7 +553,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawPhongPOM_fs[1];
 			// 05-final
 			a3_DemoStateShader
-				drawSSR_fs[1];
+				drawSSR_fs[1],
+				postSSRComposite_fs[1];
 		};
 	} shaderList = {
 		{
@@ -629,6 +630,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 
 			// 05-final
 			{ { { 0 },	"shdr-fs:draw-SSR",			a3shader_fragment,	1,{ A3_DEMO_FS"05-final/drawSSR.glsl" } } },
+			{ { { 0 },	"shdr-fs:post-SSR-comp",			a3shader_fragment,	1,{ A3_DEMO_FS"05-final/postSSRComposite.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -865,6 +867,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	//a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_ubo_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSSR_fs->shader);
+
+	// deferred lighting composite
+	currentDemoProg = demoState->prog_postSSRComposite;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:post-SSR-comp");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.postSSRComposite_fs->shader);
 
 
 	// activate a primitive for validation
