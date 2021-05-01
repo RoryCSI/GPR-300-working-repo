@@ -73,10 +73,20 @@ const float step = 0.05;
 const float LLimiter = 0.2;
 const float minRayStep = 0.2;
 
-vec3 getPosition(in vec2 texCoord) {
-    float z = texture(uImage04, texCoord).w;
 
-    return vec3(texCoord, texture(uImage04, texCoord).z);
+float linearize_depth(float d,float zNear,float zFar)
+{
+    return zNear * zFar / (zFar + d * (zNear - zFar));
+}
+
+vec3 getPosition(in vec2 texCoord) {
+    float z = texture(uImage04, texCoord).r;
+    vec4 position_screen = vec4(texCoord, linearize_depth(z,0.1,1), 1);
+    vec4 position_view = uPB_inv * position_screen; //undo bias projection
+	position_view.xyz /= position_view.w; 
+
+    return position_view.xyz;
+    //return vec3(texCoord, linearize_depth(z,1,1));
 }
 
 vec2 binarySearch(inout vec3 dir, inout vec3 hitCoord, inout float dDepth) {
@@ -138,7 +148,7 @@ void main() {
     }
 
     vec3 normal = texture(uImage05, texCoord).xyz;
-    vec3 viewPos = -getPosition(texCoord);
+    vec3 viewPos = getPosition(texCoord);
 
 
     // Reflection vector
@@ -149,8 +159,8 @@ void main() {
     float dDepth; 
     vec2 coords = rayCast(reflected * max(-viewPos.z, minRayStep), hitPos, dDepth);
 
-    //float L = length(getPosition(coords) - viewPos);
-    //L = clamp(L * LLimiter, 0, 1);
+    float L = length(getPosition(coords) - viewPos);
+    L = clamp(L * LLimiter, 0, 1);
     float error = 1;// - L;
 
     vec4 blueColor = vec4(0,0.1,0.2,1);
@@ -160,7 +170,8 @@ void main() {
         rtFragColor = mix(texture(uImage06, texCoord), vec4(color, 1.0), reflectionStrength);
         return;
     }
-    //rtFragColor = mix(texture(uImage06, texCoord), blueColor, reflectionStrength);
+    rtFragColor = mix(texture(uImage06, texCoord), blueColor, reflectionStrength);
     //rtFragColor = texture(uImage08, vTexcoord_atlas.xy);
+    //rtFragColor = vec4(reflected,1);
     
 }
