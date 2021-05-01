@@ -233,7 +233,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		0,
 		demoState->draw_teapot,
 		demoState->draw_unit_torus,
-		demoState->draw_teapot,
+		demoState->draw_unit_sphere,
 		demoState->draw_unit_plane_z,
 	};
 

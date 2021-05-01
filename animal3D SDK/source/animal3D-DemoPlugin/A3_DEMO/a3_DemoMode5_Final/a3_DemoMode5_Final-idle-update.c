@@ -224,6 +224,40 @@ void a3final_update_animation(a3_DemoState* demoState, a3_DemoMode5_Final* demoM
 {
 	if (demoState->updateAnimation)
 	{
+		a3_SceneObjectData* sceneObjectData = demoMode->obj_sphere->dataPtr;
+
+		// teapot follows curved path
+		a3ui32 const i0 = demoMode->finalSegmentIndex,
+			i1 = (i0 + 1) % demoMode->finalWaypointCount,
+			iN = (i1 + 1) % demoMode->finalWaypointCount,
+			iP = (i0 + demoMode->finalWaypointCount - 1) % demoMode->finalWaypointCount;
+
+		//a3real3Lerp(sceneObjectData->position.v,
+		//	demoMode->curveWaypoint[i0].v,
+		//	demoMode->curveWaypoint[i1].v,
+		//	demoMode->curveSegmentParam);
+		a3real3CatmullRom(sceneObjectData->position.v,
+			demoMode->finalWaypoint[iP].v,
+			demoMode->finalWaypoint[i0].v,
+			demoMode->finalWaypoint[i1].v,
+			demoMode->finalWaypoint[iN].v,
+			demoMode->finalSegmentParam);
+		//a3real3HermiteTangent(sceneObjectData->position.v,
+		//	demoMode->curveWaypoint[i0].v,
+		//	demoMode->curveTangent[i0].v,
+		//	demoMode->curveWaypoint[i1].v,
+		//	demoMode->curveTangent[i1].v,
+		//	demoMode->curveSegmentParam);
+
+		// update timer
+		demoMode->finalSegmentTime += (a3f32)dt;
+		if (demoMode->finalSegmentTime >= demoMode->finalSegmentDuration)
+		{
+			demoMode->finalSegmentTime -= demoMode->finalSegmentDuration;
+			demoMode->finalSegmentIndex = (demoMode->finalSegmentIndex + 1) % demoMode->finalWaypointCount;
+		}
+		demoMode->finalSegmentParam = demoMode->finalSegmentTime * demoMode->finalSegmentDurationInv;
+
 		// keyframe controllers
 		a3f32 const dt_flt = (a3f32)dt;
 		a3final_updateKeyframeController(demoMode->animMorphTeapot, dt_flt);
@@ -295,8 +329,8 @@ void a3final_update_scene(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode,
 	a3demo_updateSceneObject(demoMode->obj_torus, 0);
 	a3demo_updateSceneObjectStack(demoMode->obj_torus, projector);
 
-	a3demo_updateSceneObject(demoMode->obj_teapot2, 0);
-	a3demo_updateSceneObjectStack(demoMode->obj_teapot2, projector);
+	a3demo_updateSceneObject(demoMode->obj_sphere, 0);
+	a3demo_updateSceneObjectStack(demoMode->obj_sphere, projector);
 
 	a3demo_updateSceneObject(demoMode->obj_ground, 0);
 	a3demo_updateSceneObjectStack(demoMode->obj_ground, projector);

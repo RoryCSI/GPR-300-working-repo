@@ -191,12 +191,8 @@ struct a3_DemoMode5_Final
 	a3_Hierarchy hierarchy_scene[1];
 	
 	// waypoint and handle data
-	a3vec4 finalWaypoint[finalMaxCount_waypoint], finalTangent[finalMaxCount_waypoint];
-	a3ui32 finalWaypointCount;
-
-	// animation data for fairy
-	a3f32 finalSegmentDuration, finalSegmentDurationInv, finalSegmentTime, finalSegmentParam;
-	a3ui32 finalSegmentIndex;
+	a3vec4 curveWaypoint[curvesMaxCount_waypoint], curveTangent[curvesMaxCount_waypoint];
+	a3ui32 curveWaypointCount;
 
 	// animation data
 	a3_Final_KeyframeController animMorphTeapot[1], animPoseSkel[1];

@@ -156,7 +156,7 @@ void a3final_loadValidate(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode)
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
 	a3demo_initSceneObject(demoMode->obj_torus, 6,
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
-	a3demo_initSceneObject(demoMode->obj_teapot2, 7,
+	a3demo_initSceneObject(demoMode->obj_sphere, 7,
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
 	a3demo_initSceneObject(demoMode->obj_ground, 8,
 		demoMode->sceneObjectData, demoMode->modelMatrixStack);
@@ -284,10 +284,10 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	sceneObjectData->scale.x = a3real_two;
 	sceneObjectData->scaleMode = a3scale_uniform;
 
-	sceneObject = demoMode->obj_teapot2;
+	sceneObject = demoMode->obj_sphere;
 	sceneObjectData = sceneObject->dataPtr;
 	a3hierarchySetNode(demoMode->hierarchy_scene,
-		sceneObject->sceneHierarchyIndex, sceneObject_parent->sceneHierarchyIndex, "obj_teapot2");
+		sceneObject->sceneHierarchyIndex, sceneObject_parent->sceneHierarchyIndex, "obj_sphere");
 	a3demo_resetSceneObjectData(sceneObjectData);
 	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
 	sceneObjectData->position.x = a3real_zero;
@@ -601,6 +601,29 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 		spatialPose = demoMode->skeletonPose[p] + j;
 		a3spatialPoseSetTranslation(spatialPose, +3.0f, +4.0f, +5.0f);	// shift whole figure by some vector
 	}
+
+	demoMode->finalWaypointCount = 4;
+	for (i = 0; i < finalMaxCount_waypoint; ++i)
+	{
+		demoMode->finalWaypoint[i] = a3vec4_w;
+		demoMode->finalTangent[i] = a3vec4_zero;
+	}
+	demoMode->finalWaypoint[0].x = +24.0f;
+	demoMode->finalWaypoint[0].z = 2.0f;
+	demoMode->finalWaypoint[1].y = +24.0f;
+	demoMode->finalWaypoint[1].z = 12.0f;
+	demoMode->finalWaypoint[2].x = -24.0f;
+	demoMode->finalWaypoint[2].z = 2.0f;
+	demoMode->finalWaypoint[3].y = -24.0f;
+	demoMode->finalWaypoint[3].z = 12.0f;
+	demoMode->finalTangent[0].y = +8.0f;
+	demoMode->finalTangent[1].x = -8.0f;
+	demoMode->finalTangent[2].y = -8.0f;
+	demoMode->finalTangent[3].x = +8.0f;
+
+	// animation
+	demoMode->finalSegmentDuration = 2.0f;
+	demoMode->finalSegmentDurationInv = a3recip(demoMode->finalSegmentDuration);
 
 
 	// other options
