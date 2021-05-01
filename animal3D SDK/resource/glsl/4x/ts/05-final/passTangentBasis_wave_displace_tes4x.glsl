@@ -111,10 +111,12 @@ void main()
 	// -> Correct Tangent, Bitangent, Normal for wave positions.
 
 	//vec3 waveTangent = normalize(vec3(1, k * waveAmplitude * cos(f),0));
-	normal = normalize(vec4(-waveAmplitude * waveSpeed * cos(f),0.0,1.0,1.0));
-	bitangent = normalize(vec4(1,0, waveAmplitude * waveSpeed * cos(f),0.0));
-	tangent = vec4(cross(normal.xyz, bitangent.xyz), 0);
-	//tangent = normalize(vec4(1,0, waveAmplitude * waveSpeed * cos(f),0.0));
+	//normal = normalize(vec4(-waveAmplitude * waveSpeed * cos(f),0.0,1.0,1.0));
+	//bitangent = normalize(vec4(1,0, waveAmplitude * waveSpeed * cos(f),0.0));
+	//tangent = vec4(cross(normal.xyz, bitangent.xyz), 0);
+	normal = normalize(vec4(-waveAmplitude * cos(f),1.0,1.0,1.0));
+	bitangent = normalize(vec4((cross(normal.xyz , tangent.xyz)),1));
+	tangent = normalize(vec4(1,waveAmplitude * cos(f),1.0,1.0));
 
 	//Pass data
 	vVertexData.vTangentBasis_view = mat4(tangent,bitangent,normal,pos_view);

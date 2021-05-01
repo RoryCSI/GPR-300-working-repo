@@ -161,9 +161,9 @@ void main() {
 
     float L = length(getPosition(coords) - viewPos);
     L = clamp(L * LLimiter, 0, 1);
-    float error = 1;// - L;
+    float error = 1 - L;
 
-    vec4 blueColor = vec4(0,0.1,0.2,1);
+    vec4 blueColor = vec4(0.1,0.15,0.2,0.2);
     vec3 color = texture(uImage06, coords.xy).rgb * error;
 
     if (coords.xy != vec2(-1.0)) {
@@ -171,7 +171,7 @@ void main() {
         return;
     }
     rtFragColor = mix(texture(uImage06, texCoord), blueColor, reflectionStrength);
-    //rtFragColor = texture(uImage08, vTexcoord_atlas.xy);
+    //rtFragColor = texture(uImage06, vTexcoord_atlas.xy);
     //rtFragColor = vec4(reflected,1);
     
 }
