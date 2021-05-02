@@ -223,7 +223,7 @@ struct a3_DemoState
 		a3_VertexBuffer drawDataBuffer[demoStateMaxCount_drawDataBuffer];
 		struct {
 			a3_VertexBuffer
-				vbo_staticSceneObjectDrawBuffer[1];			// buffer to hold all data for static scene objects (e.g. grid)
+				vbo_staticSceneObjectDrawBuffer[1],			// buffer to hold all data for static scene objects (e.g. grid)
 		};
 	};
 
@@ -237,7 +237,7 @@ struct a3_DemoState
 			a3_VertexArrayDescriptor
 				vao_position_color[1],						// VAO for vertex format with position and color
 				vao_position[1],							// VAO for vertex format with only position
-				vao_particlePosition[1];					// VAO for particle positions
+				vao_particlePosition[1];
 		};
 	};
 
@@ -262,7 +262,7 @@ struct a3_DemoState
 				draw_node[1],								// simple primitive for hierarchical node/joint
 				draw_edge[1],								// simple primitive for hierarchical edge/bone
 				draw_teapot_morph[1],						// can't not have a morphing Utah teapot
-				draw_particle_array[1];						// All particle positions as one drawable
+				draw_particle_array[1];
 		};
 	};
 

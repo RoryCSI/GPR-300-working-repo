@@ -65,44 +65,6 @@ vec3 calcParallaxCoord(in vec3 coord, in vec3 viewVec, const int steps)
 	//	-> step along view vector until intersecting height map
 	//	-> determine precise intersection point, return resulting coordinate
 
-	//referencing Buckstein POM presentation
-	//This is probably more accurate than the uncommented method below - using lerps for exact positioning.
-	////////////////////////////////////////////////////////////////////
-	/*
-	float dt = 1.0/steps;
-	int currentStep = 0;
-	vec3 coordEnd = coord - normalize(viewVec)/viewVec.z;
-	//coordEnd = coord - viewVec;
-	vec3 currentCheckPos;
-	float currentHeightSample;
-	vec3 lastCoord;
-	float lastHeightSample;
-	
-	float x;
-	while (currentStep < steps)
-	{
-		currentCheckPos = mix(vec3(coord.xy,1), vec3(coordEnd.xy,0), dt*currentStep);
-		currentHeightSample = texture(uTex_hm, vTexcoord_atlas.xy).r;
-		if (currentHeightSample > currentCheckPos.y)
-		{
-			x = (lastCoord.y - lastHeightSample) /
-			((lastHeightSample - currentHeightSample) - (lastCoord.y - currentCheckPos.y ));
-			currentStep = steps + 1;
-		}
-		else
-		{
-			lastHeightSample = currentHeightSample;
-			lastCoord = currentCheckPos;
-		}
-		currentStep++;
-		coord = mix(lastCoord, currentCheckPos, x);
-	}
-	
-	return coord;
-	*/
-	///////////////////////////////////////////////////////////////////
-	
-	
 	//References - https://learnopengl.com/Advanced-Lighting/Parallax-Mapping
 	//			 - https://www.gamedev.net/tutorials/programming/graphics/a-closer-look-at-parallax-occlusion-mapping-r3262/
 	//		     - "nm pom" presentation in Canvas
@@ -126,23 +88,12 @@ vec3 calcParallaxCoord(in vec3 coord, in vec3 viewVec, const int steps)
 	}
 	//set coord
 	coord = currentTexCoords;
-
-	//Try using lerp technique - bit broken
-	/*
-	float x = ((currentTexCoords + deltaTexCoords).y - (currentDepthMapValue + dt)) /
-			 (((currentDepthMapValue + dt) - currentDepthMapValue) - ((currentTexCoords + deltaTexCoords).y - currentTexCoords.y ));
-	coord = mix(currentTexCoords + deltaTexCoords, currentTexCoords, x);
-	*/
-	
-	// done
 	return coord;
 }
 
 void main()
 {
-	// DUMMY OUTPUT: all fragments are OPAQUE GREEN
-//	rtFragColor = vec4(0.0, 1.0, 0.0, 1.0);
-
+	//declarations
 	vec4 diffuseColor = vec4(0.0), specularColor = diffuseColor, dd, ds;
 	
 	// view-space tangent basis
@@ -194,8 +145,4 @@ void main()
 	rtFragNormal = vec4(nrm_view.xyz * 0.5 + 0.5, 1.0);
 	rtFragDiffuse = sample_dm * diffuseColor;
 	rtFragSpecular = sample_sm * specularColor;
-	//rtFragPosition = vec4(pos_view.xyz/pos_view.w, 1.0);
-	
-	// DEBUGGING
-	//rtFragColor.rgb = texcoord;
 }

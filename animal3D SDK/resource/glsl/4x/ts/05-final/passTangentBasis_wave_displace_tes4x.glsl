@@ -18,6 +18,7 @@
 	
 	passTangentBasis_displace_tes4x.glsl
 	Pass interpolated and displaced tangent basis.
+	Displace new vertices according to SIN wave.
 */
 
 #version 450
@@ -96,26 +97,18 @@ void main()
 
 	//calculate pos displacement
     float heightmapDisplaceY = texture(uTex_hm, tessTexCoord.xy).r;
-	//pos += normal * (heightmapDisplaceY * 0.3f);
 
 	//calculate wave pos displacement
 	float k = 2 * 3.14 / waveLength;
 	float f = k * (gl_TessCoord.x - waveSpeed * uTime);
 	float waveDisplaceY = waveAmplitude * sin(f);
 
+	// add displacements
     pos += normal * (heightmapDisplaceY  * 0.3f);
 	pos.y += waveDisplaceY;
 
-	//pos += normal * (waveDisplaceY * 0.3f);
-
-	//TO-DO:
-	// -> Correct Tangent, Bitangent, Normal for wave positions.
-
-	//vec3 waveTangent = normalize(vec3(1, k * waveAmplitude * cos(f),0));
-	//normal = normalize(vec4(-waveAmplitude * waveSpeed * cos(f),0.0,1.0,1.0));
-	//bitangent = normalize(vec4(1,0, waveAmplitude * waveSpeed * cos(f),0.0));
-	//tangent = vec4(cross(normal.xyz, bitangent.xyz), 0);
-	normal = normalize(vec4((waveAmplitude * cos(f)),1.0,1.0,1.0));
+	// adjust TBN
+	normal = normalize(vec4((waveAmplitude * -cos(f)),1.0,1.0,1.0));
 	bitangent = normalize(vec4((cross(normal.xyz , tangent.xyz)),1));
 	tangent = normalize(vec4(1,(waveAmplitude * cos(f)),1.0,1.0));
 

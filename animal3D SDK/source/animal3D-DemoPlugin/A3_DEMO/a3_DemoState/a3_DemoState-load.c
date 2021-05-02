@@ -17,6 +17,8 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+
+	///////Modified by Rory Beebout///////
 	
 	a3_DemoState_loading.c/.cpp
 	Demo state function implementations.
@@ -172,7 +174,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 
 	a3ui32 PARTICLE_COUNT = 64000;
 	// pointer to shared vbo/ibo
-	a3_VertexBuffer* vbo_ibo, * vbo_pbo;
+	a3_VertexBuffer* vbo_ibo;
 
 	a3_VertexArrayDescriptor *vao;
 	a3_VertexDrawable *currentDrawable;
@@ -180,10 +182,9 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	a3ui32 numVerts = 0;
 	a3ui32 i, j;
 	a3vec3* G_ComputeStartPositions;
-
 	G_ComputeStartPositions = calloc(PARTICLE_COUNT, sizeof(a3vec3));
 	for (a3ui32 i = 0; i < PARTICLE_COUNT; i++) {
-		a3vec3 vec = {(a3randomRange(-20,20),a3randomRange(-20,20),a3randomRange(-20,20))};
+		a3vec3 vec = {(a3randomRange(-1000,1000),a3randomRange(-1000,1000),a3randomRange(-0100,1000))};
 		G_ComputeStartPositions[i] = vec;
 	}
 
@@ -352,7 +353,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	}
 
 
-	// particle buffer
+	// particle buffer setup
 	a3_VertexFormatDescriptor particleFormat[1] = {0};
 	a3_VertexAttributeDescriptor particleAttrib[1] = {0};
 	{
@@ -380,15 +381,12 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	for (i = 0; i < morphingModelsCount; ++i)
 		sharedIndexStorage += a3indexFormatGetStorageSpaceRequired(sceneCommonIndexFormat, morphingModelsData[i]->numIndices);
 
-		sharedIndexStorage += a3indexFormatGetStorageSpaceRequired(sceneCommonIndexFormat, PARTICLE_COUNT);
+	sharedIndexStorage += a3indexFormatGetStorageSpaceRequired(sceneCommonIndexFormat, PARTICLE_COUNT);
 
 	// create shared buffer
 	vbo_ibo = demoState->vbo_staticSceneObjectDrawBuffer;
 	a3bufferCreateSplit(vbo_ibo, "vbo/ibo:scene", a3buffer_vertex, sharedVertexStorage, sharedIndexStorage, 0, 0);
 	sharedVertexStorage = 0;
-
-	vbo_pbo = demoState->vbo_particleBuffer;
-	a3bufferCreate(vbo_pbo, "vbo/pbo:particles", a3buffer_vertex, PARTICLE_COUNT * sizeof(a3vec3), G_ComputeStartPositions);
 
 	// create vertex formats and drawables
 	// axes: position and color
@@ -448,6 +446,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		a3vertexDrawableCreateIndexed(currentDrawable, vao, vbo_ibo, sceneCommonIndexFormat, morphingModelsData[morphModelIndex]->primType, i, morphingModelsData[morphModelIndex]->numIndices);
 	}
 
+	// particle positions
 	vao = demoState->vao_particlePosition;
 	a3vertexArrayCreateDescriptor(vao, "vao:particlePos", vbo_ibo, particleFormat, sharedVertexStorage);
 	{
@@ -456,7 +455,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 
 		for (i = 0; i < PARTICLE_COUNT; i++)
 		{
-			a3vertexAttribDataCreateDescriptor(particleAttribData, a3attrib_position, G_ComputeStartPositions[i].v);
+			a3vertexAttribDataCreateDescriptor(particleAttribData, a3attrib_position, &G_ComputeStartPositions[i]);
 		}
 		a3vertexArrayStore(vao, particleAttribData, 1, 0, 0);
 		a3indexBufferStore(vbo_ibo, sceneCommonIndexFormat, particleData[0].indexData, particleData[0].numIndices, 0, &i, 0);
@@ -931,7 +930,7 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSSR_fs->shader);
 
-	// compute
+	// Compute Particle Positions
 	currentDemoProg = demoState->prog_computeParticles;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:compute-Particles");
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.computeParticles_cp->shader);

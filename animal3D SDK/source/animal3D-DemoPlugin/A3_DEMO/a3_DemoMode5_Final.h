@@ -17,6 +17,7 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+	///////Modified by Rory Beebout///////
 
 	a3_DemoMode5_Final.h
 	Demo mode interface: animated objects scene.

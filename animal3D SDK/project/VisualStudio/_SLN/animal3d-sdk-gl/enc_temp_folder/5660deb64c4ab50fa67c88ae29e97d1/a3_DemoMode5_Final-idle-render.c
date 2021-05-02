@@ -18,8 +18,6 @@
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
 
-	///////Modified by Rory Beebout///////
-
 	a3_DemoMode5_Final-idle-render.c
 	Demo mode implementations: animation scene.
 
@@ -579,8 +577,7 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive();
 
-	//Screen-Space Reflections -----------------------------------------------------------
-
+	//Screen-Space Reflections
 	currentDemoProgram = demoState->prog_drawSSR;
 	a3shaderProgramActivate(currentDemoProgram->program);
 	a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uMVP, 1, fsq.mm);
@@ -600,7 +597,9 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive();
 
-	//--------------------------------------------------------------------------------------
+
+	//a3vertexDrawableActivate(demoState->draw_unit_sphere);
+	//a3real4x4SetScale(modelMat.m, 0.25f);
 
 
 	//-------------------------------------------------------------------------
@@ -758,9 +757,6 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 			a3demo_drawModelSimple(modelViewProjectionMat.m, viewProjectionMat.m, modelMat.m, currentDemoProgram);
 		}
 
-		// Overlay GPU-Accelerated Particles ------------------------------------------------------------------------
-		//!!!! NOT CURRENTLY IMPLEMENTED !!!!
-		
 		//currentDemoProgram = demoState->prog_computeParticles;
 		//a3shaderProgramActivate(currentDemoProgram->program);
 		////glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, demoMode->G_Position_buffer);
@@ -778,15 +774,13 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 		//glEnableVertexAttribArray(0);
 		//glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
 		//a3vertexDrawableActivate(demoState->draw_particle_array);
-		//a3vertexDrawableActivate(demoState->draw_unit_sphere);
+		a3vertexDrawableActivate(demoState->draw_unit_sphere);
 
-		glDrawArrays(GL_POINTS, demoState->draw_particle_array->first, PARTICLE_COUNT);
+		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
 		//
 		//glEnable(GL_CULL_FACE);
 		//glDisableVertexAttribArray(0);
 		////glUseProgram(0);
-
-		// ------------------------------------------------------------------------------------------------------------
 
 		// skeleton
 		currentDemoProgram = demoState->prog_drawColorHierarchy_instanced;

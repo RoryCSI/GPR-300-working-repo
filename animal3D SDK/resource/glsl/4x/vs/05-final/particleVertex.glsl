@@ -20,20 +20,19 @@
 	
 	///////Modified by Rory Beebout///////
 
-	passColor_hierarchy_transform_instanced_vs4x.glsl
-	Transform position attribute for instance and pass hierarchical color.
+	particleVertex.glsl
+	Transform position for particle positions just using projectionView.
 */
 
 #version 450
 
 layout (location = 0) in vec3 vertPos;
 
-
 uniform mat4 uP; //Actually is projectionView
 
 out float color;
 
-void main(){ 
-
+void main()
+{ 
 	gl_Position = uP * vec4(vertPos, 1.0); 
 }

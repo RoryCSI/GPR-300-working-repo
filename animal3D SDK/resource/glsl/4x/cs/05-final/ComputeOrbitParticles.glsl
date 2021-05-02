@@ -16,8 +16,8 @@
 	By Daniel S. Buckstein
 	///////Modified by Rory Beebout///////
 	
-	drawPhongPOM_fs4x.glsl
-	Output Phong shading with parallax occlusion mapping (POM).
+	ComputeOrbitParticles.glsl
+	Calculate particle new positions with velocity and write over buffer.
 */
 
 #version 450
@@ -32,11 +32,14 @@ layout (std430, binding = 0) buffer PositionBuffer {
 
 void main() 
 {
-    const uint offset = gl_GlobalInvocationID.x + gl_GlobalInvocationID.y;
+	// work group divisions -> offset is just .x, since workgroups are 128, 1,1
 	uint index = gl_GlobalInvocationID.x;
-	vec3 computedPosition = positions[index];
-	//vec4 computedVelocity = transforms[offset][1];
 
-	 positions[index] = computedPosition + vec3(0,0.1,0)*uTime;
-	//transforms[offset][1] = vec4(0,sin(uTime),0,1);
+
+	// Physics calculations 
+	//	-> Incomplete, unable to successfully read from buffer.
+	vec3 computedPosition = positions[index];
+
+	//output
+	positions[index] = computedPosition + vec3(0,0.1,0)*uTime;
 }

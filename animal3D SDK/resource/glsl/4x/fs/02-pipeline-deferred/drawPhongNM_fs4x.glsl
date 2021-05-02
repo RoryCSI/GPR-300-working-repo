@@ -14,6 +14,7 @@
 /*
 	animal3D SDK: Minimal 3D Animation Framework
 	By Daniel S. Buckstein
+	///////Modified by Rory Beebout///////
 	
 	drawPhongNM_fs4x.glsl
 	Output Phong shading with normal mapping.
@@ -105,11 +106,5 @@ void main()
 	// MRT
 	rtFragNormal = vec4(nrm_view.xyz * 0.5 + 0.5, 1.0);
 	rtFragDiffuse = sample_dm * diffuseColor;
-	rtFragSpecular = sample_sm;// * specularColor;// + 1;
-	//vec4 rtPosition = bias * pos_view;
-	//rtFragPosition = rtPosition/rtPosition.w;
-
-	
-	// DEBUGGING
-	//rtFragColor.rg = texcoord;
+	rtFragSpecular = sample_sm;// * specularColor;
 }

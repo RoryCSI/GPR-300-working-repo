@@ -214,7 +214,6 @@ inline int a3final_updateSkeletonRenderMats(a3_Hierarchy const* hierarchy,
 void a3final_update_graphics(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode)
 {
 	a3bufferRefillOffset(demoState->ubo_transform, 0, 0, sizeof(demoMode->modelMatrixStack), demoMode->modelMatrixStack);
-	a3bufferRefillOffset(demoState->ubo_transform + 1, 0, 0, sizeof(demoMode->G_ComputePositions), demoMode->G_ComputePositions);
 	a3bufferRefillOffset(demoState->ubo_light, 0, 0, sizeof(demoMode->pointLightData), demoMode->pointLightData);
 	a3bufferRefillOffset(demoState->ubo_mvp, 0, 0, sizeof(demoMode->skeletonPose_render), demoMode->skeletonPose_render);
 	a3bufferRefillOffset(demoState->ubo_mvp, 0, sizeof(demoMode->skeletonPose_render), sizeof(demoMode->hierarchyDepth_skel), demoMode->hierarchyDepth_skel);

@@ -337,7 +337,7 @@ void a3final_update_scene(a3_DemoState* demoState, a3_DemoMode5_Final* demoMode,
 	a3demo_updateSceneObject(demoMode->obj_ground, 0);
 	a3demo_updateSceneObjectStack(demoMode->obj_ground, projector);
 
-	// update light
+	// update second light
 	a3demo_updateSceneObject(demoMode->obj_light_second, 1);
 	a3demo_updateSceneObjectStack(demoMode->obj_light_second, projector);
 

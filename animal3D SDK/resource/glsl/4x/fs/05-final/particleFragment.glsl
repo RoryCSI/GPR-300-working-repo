@@ -20,8 +20,8 @@
 	
 	///////Modified by Rory Beebout///////
 
-	passColor_hierarchy_transform_instanced_vs4x.glsl
-	Transform position attribute for instance and pass hierarchical color.
+	particleFragment.glsl
+	Color particle, nothing more.
 */
 
 #version 450
