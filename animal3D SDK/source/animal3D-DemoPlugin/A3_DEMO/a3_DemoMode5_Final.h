@@ -36,7 +36,15 @@
 
 #include "_animation/a3_Hierarchy.h"
 
-
+// OpenGL
+#ifdef _WIN32
+#include <gl/glew.h>
+#include <Windows.h>
+#include <GL/GL.h>
+#include <stdlib.h>
+#else	// !_WIN32
+#include <OpenGL/gl3.h>
+#endif	// _WIN32
 //-----------------------------------------------------------------------------
 
 #ifdef __cplusplus
@@ -197,6 +205,10 @@ struct a3_DemoMode5_Final
 	// animation data for fairy
 	a3f32 finalSegmentDuration, finalSegmentDurationInv, finalSegmentTime, finalSegmentParam;
 	a3ui32 finalSegmentIndex;
+
+	// compute data
+	GLuint G_Position_buffer;
+	a3vec3* G_ComputePositions;
 
 	// animation data
 	a3_Final_KeyframeController animMorphTeapot[1], animPoseSkel[1];

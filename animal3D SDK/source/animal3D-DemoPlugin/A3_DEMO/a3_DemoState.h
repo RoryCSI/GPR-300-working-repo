@@ -104,7 +104,7 @@ enum a3_DemoState_ObjectMaxCount
 	demoStateMaxCount_vertexArray = 4,
 	demoStateMaxCount_drawable = 16,
 
-	demoStateMaxCount_shaderProgram = 36,
+	demoStateMaxCount_shaderProgram = 39,
 	demoStateMaxCount_uniformBuffer = 8,
 
 	demoStateMaxCount_texture = 32,
@@ -313,7 +313,8 @@ struct a3_DemoState
 				prog_drawPhongWaves[1],						// draw Phong for Wave-displaced surfaces
 				prog_drawTangentBasisWaves[1],				// draw tangent basis and wireframe for wave-displaced surfaces
 				prog_drawSSR[1],
-				prog_postSSRComposite[1];					// draw Phong for morphing POM objects
+				prog_computeParticles[1],					// draw Phong for morphing POM objects
+				prog_drawParticles[1];
 				//prog_drawColorHierarchy_instanced[1];		// draw color based on hierarchical index
 		};
 	};

@@ -281,6 +281,8 @@ extern "C"
 	a3ret a3shaderProgramHandleUpdateReleaseCallback(a3_ShaderProgram *program);
 
 
+	a3ret a3shaderProgramComputeDispatch(const a3_ShaderProgram *program, const a3ui32 workgroupsX, const a3ui32 workgroupsY, const a3ui32 workgroupsZ);
+
 //-----------------------------------------------------------------------------
 	// uniform functions
 

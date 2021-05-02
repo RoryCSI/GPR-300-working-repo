@@ -35,6 +35,15 @@
 //typedef struct a3_DemoState a3_DemoState;
 #include "../a3_DemoState.h"
 
+// OpenGL
+#ifdef _WIN32
+#include <gl/glew.h>
+#include <Windows.h>
+#include <GL/GL.h>
+#include <stdlib.h>
+#else	// !_WIN32
+#include <OpenGL/gl3.h>
+#endif	// _WIN32
 
 //-----------------------------------------------------------------------------
 
@@ -202,6 +211,18 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	a3_PointLightData* pointLightData = 0, * pointLightDataEnd = 0;
 
 	a3ui32 i;
+	a3ui32 PARTICLE_COUNT = 64000;
+	//demoMode->G_ComputePositions = calloc(PARTICLE_COUNT, sizeof(a3vec3));
+	//for (a3ui32 i = 0; i < PARTICLE_COUNT; i++) {
+	//	a3vec3 vec = {(a3randomRange(-20,20),a3randomRange(-20,20),a3randomRange(-20,20))};
+		//vec.x = (rand() % 2000) / (500.0);
+		//vec.y = (rand() % 2000) / (500.0);
+		//vec.z = (rand() % 2000) / (500.0);
+	//	demoMode->G_ComputePositions[i] = vec;
+	//}
+	//glGenBuffers(1, &demoMode->G_Position_buffer);
+	//glBindBuffer(GL_ARRAY_BUFFER, demoMode->G_Position_buffer);
+	//glBufferData(GL_ARRAY_BUFFER, PARTICLE_COUNT * sizeof(a3vec3), demoMode->G_ComputePositions, GL_DYNAMIC_COPY);
 
 	// camera's starting orientation depends on "vertical" axis
 	// we want the exact same view in either case

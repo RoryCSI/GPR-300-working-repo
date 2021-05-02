@@ -41,11 +41,12 @@
 #include <gl/glew.h>
 #include <Windows.h>
 #include <GL/GL.h>
+#include <stdlib.h>
 #else	// !_WIN32
 #include <OpenGL/gl3.h>
 #endif	// _WIN32
 
-
+const a3ui32 PARTICLE_COUNT = 64000;
 //-----------------------------------------------------------------------------
 
 // controls for pipelines mode
@@ -596,6 +597,11 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 	a3framebufferActivate(currentWriteFBO);
 	a3vertexDrawableRenderActive();
 
+
+	//a3vertexDrawableActivate(demoState->draw_unit_sphere);
+	//a3real4x4SetScale(modelMat.m, 0.25f);
+
+
 	//-------------------------------------------------------------------------
 	// DISPLAY: final pass, perform and present final composite
 	//	- finally draw to back buffer
@@ -750,6 +756,27 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 			a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, demoMode->pointLightData[i].color.v);
 			a3demo_drawModelSimple(modelViewProjectionMat.m, viewProjectionMat.m, modelMat.m, currentDemoProgram);
 		}
+
+		currentDemoProgram = demoState->prog_computeParticles;
+		a3shaderProgramActivate(currentDemoProgram->program);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, demoMode->G_Position_buffer);
+		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uTime, 1, &keyframeTime);
+		//glDispatchCompute(PARTICLE_COUNT / 128, 1, 1);
+		a3shaderProgramComputeDispatch(demoState->prog_computeParticles->program, PARTICLE_COUNT / 128, 1, 1);
+		glMemoryBarrier(GL_ALL_BARRIER_BITS);
+
+		currentDemoProgram = demoState->prog_drawParticles;
+		a3shaderProgramActivate(currentDemoProgram->program);
+		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, viewProjectionMat.mm);
+		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, red);
+		glBindBuffer(GL_ARRAY_BUFFER, demoMode->G_Position_buffer);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
+		
+		glEnable(GL_CULL_FACE);
+		glDisableVertexAttribArray(2);
+		//glUseProgram(0);
 
 		// skeleton
 		currentDemoProgram = demoState->prog_drawColorHierarchy_instanced;

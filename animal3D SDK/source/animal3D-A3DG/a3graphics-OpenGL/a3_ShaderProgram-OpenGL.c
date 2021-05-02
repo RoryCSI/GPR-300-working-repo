@@ -455,7 +455,7 @@ a3ret a3shaderProgramGetMaxImageUnits()
 
 //-----------------------------------------------------------------------------
 
-a3ret a3shaderProgramComputeDispatch(const a3_ShaderProgram* program, const a3ui32 workgroupsX, const a3ui32 workgroupsY, const a3ui32 workgroupsZ)
+a3ret a3shaderProgramComputeDispatch(const a3_ShaderProgram *program, const a3ui32 workgroupsX, const a3ui32 workgroupsY, const a3ui32 workgroupsZ)
 {
 	if (program && program->handle->handle && workgroupsX && workgroupsY && workgroupsZ)
 	{

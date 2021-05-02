@@ -171,7 +171,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	};
 
 	// pointer to shared vbo/ibo
-	a3_VertexBuffer *vbo_ibo;
+	a3_VertexBuffer *vbo_ibo, *vbo_pbo;
 	a3_VertexArrayDescriptor *vao;
 	a3_VertexDrawable *currentDrawable;
 	a3ui32 sharedVertexStorage = 0, sharedIndexStorage = 0;
@@ -342,7 +342,6 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		}
 	}
 
-
 	// common index format required for shapes that share vertex formats
 	a3geometryCreateIndexFormat(sceneCommonIndexFormat, numVerts);
 	sharedIndexStorage = 0;
@@ -358,6 +357,18 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	// create shared buffer
 	vbo_ibo = demoState->vbo_staticSceneObjectDrawBuffer;
 	a3bufferCreateSplit(vbo_ibo, "vbo/ibo:scene", a3buffer_vertex, sharedVertexStorage, sharedIndexStorage, 0, 0);
+	sharedVertexStorage = 0;
+
+	a3vec4 particles[600][2];
+	for (int i = 0; i < 200; i++)
+	{
+		a3vec4 current = {a3randomRange(-5, 5), a3randomRange(-5, 5), a3randomRange(-5, 5), 1};
+		particles[i][0] = current;
+
+		particles[i][1] = a3vec4_zero;
+	}
+	vbo_pbo = demoState->vbo_particleBuffer;
+	a3bufferCreate(vbo_pbo, "vbo/pbo:particles", a3buffer_vertex, sizeof(particles), *particles);
 	sharedVertexStorage = 0;
 
 
@@ -429,6 +440,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	for (i = 0; i < morphingModelsCount; ++i)
 		for (j = 0; j < morphingModelsMaxTargets; ++j)
 			a3geometryReleaseData(morphingModelsData[i] + j);
+
 }
 
 
@@ -506,7 +518,10 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			a3_DemoStateShader
 				passColor_hierarchy_transform_instanced_vs[1],
 				passTangentBasis_morph_transform_vs[1];
+
 			// 05-final
+			a3_DemoStateShader
+				passParticle_vs[1];
 
 			// tessellation shaders
 			// 03-lod
@@ -553,7 +568,13 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 				drawPhongPOM_fs[1];
 			// 05-final
 			a3_DemoStateShader
-				drawSSR_fs[1];
+				drawSSR_fs[1],
+				drawParticle_fs[1];
+
+			// compute shaders
+			// 05-final
+			a3_DemoStateShader
+				computeParticles_cp[1];
 		};
 	} shaderList = {
 		{
@@ -584,6 +605,8 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 			{ { { 0 },	"shdr-vs:pass-hcol-trans-inst",		a3shader_vertex  ,	1,{ A3_DEMO_VS"04-anim/passColor_hierarchy_transform_instanced_vs4x.glsl" } } },
 			{ { { 0 },	"shdr-vs:pass-tb-morph-trans",		a3shader_vertex  ,	2,{ A3_DEMO_VS"04-anim/passTangentBasis_morph_transform_vs4x.glsl",
 																					A3_DEMO_VS"00-common/utilCommon_vs4x.glsl",} } },
+			// 05-final
+			{ { { 0 },	"shdr-fs:pass-particle",					a3shader_vertex,	1,{ A3_DEMO_VS"05-final/particleVertex.glsl" } } },
 
 			// ts
 			// 03-lod
@@ -628,7 +651,12 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 																					A3_DEMO_FS"00-common/utilCommon_fs4x.glsl",} } },
 
 			// 05-final
-			{ { { 0 },	"shdr-fs:draw-SSR",			a3shader_fragment,	1,{ A3_DEMO_FS"05-final/drawSSR.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-SSR",					a3shader_fragment,	1,{ A3_DEMO_FS"05-final/drawSSR.glsl" } } },
+			{ { { 0 },	"shdr-fs:draw-Particle",			a3shader_fragment,	1,{ A3_DEMO_FS"05-final/particleFragment.glsl" } } },
+
+			// cs
+			// 05-final
+			{ { { 0 },	"shdr-cs:compute-Particles",			a3shader_compute,	1,{ A3_DEMO_CS"05-final/ComputeOrbitParticles.glsl" } } },
 		}
 	};
 	a3_DemoStateShader *const shaderListPtr = (a3_DemoStateShader *)(&shaderList), *shaderPtr;
@@ -859,12 +887,23 @@ void a3demo_loadShaders(a3_DemoState *demoState)
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawTangentBasis_gs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawColorAttrib_fs->shader);
 
-	// blending
+	// Screen Space Reflection
 	currentDemoProg = demoState->prog_drawSSR;
 	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-SSR");
 	//a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTangentBasis_ubo_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passTexcoord_transform_vs->shader);
 	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawSSR_fs->shader);
+
+	// compute
+	currentDemoProg = demoState->prog_computeParticles;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:compute-Particles");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.computeParticles_cp->shader);
+
+	// Draw particles
+	currentDemoProg = demoState->prog_drawParticles;
+	a3shaderProgramCreate(currentDemoProg->program, "prog:draw-Particles");
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.passParticle_vs->shader);
+	a3shaderProgramAttachShader(currentDemoProg->program, shaderList.drawParticle_fs->shader);
 
 
 	// activate a primitive for validation
