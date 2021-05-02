@@ -211,18 +211,6 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	a3_PointLightData* pointLightData = 0, * pointLightDataEnd = 0;
 
 	a3ui32 i;
-	a3ui32 PARTICLE_COUNT = 64000;
-	//demoMode->G_ComputePositions = calloc(PARTICLE_COUNT, sizeof(a3vec3));
-	//for (a3ui32 i = 0; i < PARTICLE_COUNT; i++) {
-	//	a3vec3 vec = {(a3randomRange(-20,20),a3randomRange(-20,20),a3randomRange(-20,20))};
-		//vec.x = (rand() % 2000) / (500.0);
-		//vec.y = (rand() % 2000) / (500.0);
-		//vec.z = (rand() % 2000) / (500.0);
-	//	demoMode->G_ComputePositions[i] = vec;
-	//}
-	//glGenBuffers(1, &demoMode->G_Position_buffer);
-	//glBindBuffer(GL_ARRAY_BUFFER, demoMode->G_Position_buffer);
-	//glBufferData(GL_ARRAY_BUFFER, PARTICLE_COUNT * sizeof(a3vec3), demoMode->G_ComputePositions, GL_DYNAMIC_COPY);
 
 	// camera's starting orientation depends on "vertical" axis
 	// we want the exact same view in either case
@@ -284,8 +272,9 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 		sceneObject->sceneHierarchyIndex, sceneObject_parent->sceneHierarchyIndex, "obj_skeleton");
 	a3demo_resetSceneObjectData(sceneObjectData);
 	a3demo_resetModelMatrixStack(sceneObject->modelMatrixStackPtr);
-	sceneObjectData->position.x = +12.0f;
-	sceneObjectData->position.y = +12.0f;
+	sceneObjectData->position.x = -28.0f;
+	sceneObjectData->position.y = +36.0f;
+	sceneObjectData->position.z = -6.0f;
 
 	sceneObject = demoMode->obj_torus;
 	sceneObjectData = sceneObject->dataPtr;
@@ -354,7 +343,7 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 	pointLightData = pointLight->dataPtr;
 	a3demo_resetPointLightData(pointLightData);
 	pointLightData->worldPos = pointLight->sceneObjectPtr->dataPtr->position;
-	a3demo_setPointLightRadius(pointLightData, a3real_onehundred*3);
+	a3demo_setPointLightRadius(pointLightData, a3real_onehundred*10);
 
 	/*pointLight = demoMode->light_point_second;
 	pointLightData = pointLight->dataPtr;
@@ -524,13 +513,13 @@ void a3final_load(a3_DemoState const* demoState, a3_DemoMode5_Final* demoMode)
 		demoMode->finalWaypoint[i] = a3vec4_w;
 		demoMode->finalTangent[i] = a3vec4_zero;
 	}
-	demoMode->finalWaypoint[0].x = +24.0f;
-	demoMode->finalWaypoint[0].z = 2.0f;
-	demoMode->finalWaypoint[1].y = +24.0f;
+	demoMode->finalWaypoint[0].x = +42.0f;
+	demoMode->finalWaypoint[0].z = 12.0f;
+	demoMode->finalWaypoint[1].y = +42.0f;
 	demoMode->finalWaypoint[1].z = 12.0f;
-	demoMode->finalWaypoint[2].x = -24.0f;
-	demoMode->finalWaypoint[2].z = 2.0f;
-	demoMode->finalWaypoint[3].y = -24.0f;
+	demoMode->finalWaypoint[2].x = -42.0f;
+	demoMode->finalWaypoint[2].z = 12.0f;
+	demoMode->finalWaypoint[3].y = -42.0f;
 	demoMode->finalWaypoint[3].z = 12.0f;
 	demoMode->finalTangent[0].y = +8.0f;
 	demoMode->finalTangent[1].x = -8.0f;
