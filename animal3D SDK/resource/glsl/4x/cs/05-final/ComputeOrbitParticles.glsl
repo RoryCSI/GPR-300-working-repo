@@ -37,6 +37,6 @@ void main()
 	vec3 computedPosition = positions[index];
 	//vec4 computedVelocity = transforms[offset][1];
 
-	 positions[index] = vec3(1,1,1);//computedPosition + vec3(0,555.1,0)*uTime;
+	 positions[index] = computedPosition + vec3(0,0.1,0)*uTime;
 	//transforms[offset][1] = vec4(0,sin(uTime),0,1);
 }
