@@ -103,7 +103,8 @@ void main()
 	float f = k * (gl_TessCoord.x - waveSpeed * uTime);
 	float waveDisplaceY = waveAmplitude * sin(f);
 
-    pos += normal * (heightmapDisplaceY * waveDisplaceY * 0.3f);
+    pos += normal * (heightmapDisplaceY  * 0.3f);
+	pos.y += waveDisplaceY;
 
 	//pos += normal * (waveDisplaceY * 0.3f);
 
@@ -114,9 +115,9 @@ void main()
 	//normal = normalize(vec4(-waveAmplitude * waveSpeed * cos(f),0.0,1.0,1.0));
 	//bitangent = normalize(vec4(1,0, waveAmplitude * waveSpeed * cos(f),0.0));
 	//tangent = vec4(cross(normal.xyz, bitangent.xyz), 0);
-	normal = normalize(vec4(-waveAmplitude * cos(f),1.0,1.0,1.0));
+	normal = normalize(vec4((waveAmplitude * cos(f)),1.0,1.0,1.0));
 	bitangent = normalize(vec4((cross(normal.xyz , tangent.xyz)),1));
-	tangent = normalize(vec4(1,waveAmplitude * cos(f),1.0,1.0));
+	tangent = normalize(vec4(1,(waveAmplitude * cos(f)),1.0,1.0));
 
 	//Pass data
 	vVertexData.vTangentBasis_view = mat4(tangent,bitangent,normal,pos_view);
