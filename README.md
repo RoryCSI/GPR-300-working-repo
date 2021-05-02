@@ -12,7 +12,7 @@ Implementation by Rory Beebout
 
 ### Description
 
-This demo is intended to show off a scene displaying "fairy" lights (surrounded by particles) and rain (also particles) over screen-space reflective water, with a tentacle reaching out of the water and thrashing.
+This demo is an exploration of various concepts in advanced graphics in the playground Animal3D framework by Daniel Buckstein. It is intended to show off a scene displaying "firefly" lights (surrounded by particles) and rain (also particles) over screen-space reflective water, with a tentacle reaching out of the water and thrashing.
 
 ---
 ### Implemented
@@ -74,3 +74,19 @@ The particular scene described in this demo is Scene 6, WATER AND COMPUTE.
 ---
 
 ### Screenshots
+Screen Space Reflection
+![Screen Space Reflection](Screenshots/SceneSSRComposite.png)
+Bloom Composite
+![Bloom Composite](Screenshots/SceneBloomComposite.png)
+Tentacle
+![Tentacle](Screenshots/ForwardKinematicsTentacle.png)
+VAO Particles (Apparently every vertex in the VAO)
+![VAO](Screenshots/VAO_Particles.png)
+Normal
+![Normal](Screenshots/SceneNormal.png)
+Specular
+![Specular](Screenshots/SceneSpecular.png)
+Base Color of scenepass
+![Color](Screenshots/ColorScene.png)
+Depth
+![Depth](Screenshots/SceneDepth.png)
