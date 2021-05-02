@@ -1,6 +1,6 @@
 # GPR-300 Final Project
 
-# Fireflies in Rain Scene
+## Water and Compute
 
 ### Attribution
 
