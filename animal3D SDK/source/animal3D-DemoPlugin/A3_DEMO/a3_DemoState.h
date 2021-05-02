@@ -101,8 +101,8 @@ enum a3_DemoState_ObjectMaxCount
 	demoStateMaxCount_timer = 1,
 
 	demoStateMaxCount_drawDataBuffer = 2,
-	demoStateMaxCount_vertexArray = 4,
-	demoStateMaxCount_drawable = 16,
+	demoStateMaxCount_vertexArray = 5,
+	demoStateMaxCount_drawable = 17,
 
 	demoStateMaxCount_shaderProgram = 39,
 	demoStateMaxCount_uniformBuffer = 8,
@@ -236,7 +236,8 @@ struct a3_DemoState
 				vao_tangentbasis_texcoord_morph[1];			// VAO for morphing tangent basis and texcoord
 			a3_VertexArrayDescriptor
 				vao_position_color[1],						// VAO for vertex format with position and color
-				vao_position[1];							// VAO for vertex format with only position
+				vao_position[1],							// VAO for vertex format with only position
+				vao_particlePosition[1];
 		};
 	};
 
@@ -260,7 +261,8 @@ struct a3_DemoState
 			a3_VertexDrawable
 				draw_node[1],								// simple primitive for hierarchical node/joint
 				draw_edge[1],								// simple primitive for hierarchical edge/bone
-				draw_teapot_morph[1];						// can't not have a morphing Utah teapot
+				draw_teapot_morph[1],						// can't not have a morphing Utah teapot
+				draw_particle_array[1];
 		};
 	};
 

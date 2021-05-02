@@ -757,26 +757,30 @@ void a3final_render(a3_DemoState const* demoState, a3_DemoMode5_Final const* dem
 			a3demo_drawModelSimple(modelViewProjectionMat.m, viewProjectionMat.m, modelMat.m, currentDemoProgram);
 		}
 
-		currentDemoProgram = demoState->prog_computeParticles;
-		a3shaderProgramActivate(currentDemoProgram->program);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, demoMode->G_Position_buffer);
-		a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uTime, 1, &keyframeTime);
-		//glDispatchCompute(PARTICLE_COUNT / 128, 1, 1);
-		a3shaderProgramComputeDispatch(demoState->prog_computeParticles->program, PARTICLE_COUNT / 128, 1, 1);
-		glMemoryBarrier(GL_ALL_BARRIER_BITS);
+		//currentDemoProgram = demoState->prog_computeParticles;
+		//a3shaderProgramActivate(currentDemoProgram->program);
+		////glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, demoMode->G_Position_buffer);
+		////a3bufferActivate(demoState->vbo_particleBuffer);
+		//a3shaderUniformSendFloat(a3unif_single, currentDemoProgram->uTime, 1, &keyframeTime);
+		////glDispatchCompute(PARTICLE_COUNT / 128, 1, 1);
+		//a3shaderProgramComputeDispatch(demoState->prog_computeParticles->program, PARTICLE_COUNT / 128, 1, 1);
+		//glMemoryBarrier(GL_ALL_BARRIER_BITS);
 
 		currentDemoProgram = demoState->prog_drawParticles;
 		a3shaderProgramActivate(currentDemoProgram->program);
 		a3shaderUniformSendFloatMat(a3unif_mat4, 0, currentDemoProgram->uP, 1, viewProjectionMat.mm);
 		a3shaderUniformSendFloat(a3unif_vec4, currentDemoProgram->uColor, 1, red);
-		glBindBuffer(GL_ARRAY_BUFFER, demoMode->G_Position_buffer);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+		//glBindBuffer(GL_ARRAY_BUFFER, demoState->vbo_particleBuffer->handle->handle);
+		//glEnableVertexAttribArray(0);
+		//glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+		//a3vertexDrawableActivate(demoState->draw_particle_array);
+		a3vertexDrawableActivate(demoState->draw_unit_sphere);
+
 		glDrawArrays(GL_POINTS, 0, PARTICLE_COUNT);
-		
-		glEnable(GL_CULL_FACE);
-		glDisableVertexAttribArray(2);
-		//glUseProgram(0);
+		//
+		//glEnable(GL_CULL_FACE);
+		//glDisableVertexAttribArray(0);
+		////glUseProgram(0);
 
 		// skeleton
 		currentDemoProgram = demoState->prog_drawColorHierarchy_instanced;

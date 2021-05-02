@@ -170,14 +170,22 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		 0.00f,  0.00f,  0.00f, +1.00f,
 	};
 
+	a3ui32 PARTICLE_COUNT = 64000;
 	// pointer to shared vbo/ibo
-	a3_VertexBuffer *vbo_ibo, *vbo_pbo;
+	a3_VertexBuffer* vbo_ibo, * vbo_pbo;
+
 	a3_VertexArrayDescriptor *vao;
 	a3_VertexDrawable *currentDrawable;
 	a3ui32 sharedVertexStorage = 0, sharedIndexStorage = 0;
 	a3ui32 numVerts = 0;
 	a3ui32 i, j;
+	a3vec3* G_ComputeStartPositions;
 
+	G_ComputeStartPositions = calloc(PARTICLE_COUNT, sizeof(a3vec3));
+	for (a3ui32 i = 0; i < PARTICLE_COUNT; i++) {
+		a3vec3 vec = {(a3randomRange(-20,20),a3randomRange(-20,20),a3randomRange(-20,20))};
+		G_ComputeStartPositions[i] = vec;
+	}
 
 	// file streaming (if requested)
 	a3_FileStream fileStream[1] = { 0 };
@@ -188,6 +196,7 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	a3_GeometryData proceduralShapesData[7] = { 0 };
 	a3_GeometryData loadedModelsData[1] = { 0 };
 	a3_GeometryData morphingModelsData[1][5] = { 0 };
+	a3_GeometryData particleData[1] = {0};
 	const a3ui32 displayShapesCount = a3demoArrayLen(displayShapesData);
 	const a3ui32 proceduralShapesCount = a3demoArrayLen(proceduralShapesData);
 	const a3ui32 loadedModelsCount = a3demoArrayLen(loadedModelsData);
@@ -342,6 +351,23 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		}
 	}
 
+
+	// particle buffer
+	a3_VertexFormatDescriptor particleFormat[1] = {0};
+	a3_VertexAttributeDescriptor particleAttrib[1] = {0};
+	{
+		
+		a3ui32 const particleAttribCount = sizeof(particleAttrib) / sizeof(a3_VertexAttributeDescriptor);
+
+		a3vertexAttribCreateDescriptor(particleAttrib, a3attrib_position, a3attrib_vec3);
+		a3vertexFormatCreateDescriptor(particleFormat, particleAttrib, particleAttribCount);
+		//for (i = 0; i < PARTICLE_COUNT; i++)
+		//{
+		sharedVertexStorage += a3vertexFormatGetStorageSpaceRequired(particleFormat, PARTICLE_COUNT);
+		numVerts += PARTICLE_COUNT;
+		//}
+	}
+
 	// common index format required for shapes that share vertex formats
 	a3geometryCreateIndexFormat(sceneCommonIndexFormat, numVerts);
 	sharedIndexStorage = 0;
@@ -354,23 +380,15 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	for (i = 0; i < morphingModelsCount; ++i)
 		sharedIndexStorage += a3indexFormatGetStorageSpaceRequired(sceneCommonIndexFormat, morphingModelsData[i]->numIndices);
 
+		sharedIndexStorage += a3indexFormatGetStorageSpaceRequired(sceneCommonIndexFormat, PARTICLE_COUNT);
+
 	// create shared buffer
 	vbo_ibo = demoState->vbo_staticSceneObjectDrawBuffer;
 	a3bufferCreateSplit(vbo_ibo, "vbo/ibo:scene", a3buffer_vertex, sharedVertexStorage, sharedIndexStorage, 0, 0);
 	sharedVertexStorage = 0;
 
-	a3vec4 particles[600][2];
-	for (int i = 0; i < 200; i++)
-	{
-		a3vec4 current = {a3randomRange(-5, 5), a3randomRange(-5, 5), a3randomRange(-5, 5), 1};
-		particles[i][0] = current;
-
-		particles[i][1] = a3vec4_zero;
-	}
 	vbo_pbo = demoState->vbo_particleBuffer;
-	a3bufferCreate(vbo_pbo, "vbo/pbo:particles", a3buffer_vertex, sizeof(particles), *particles);
-	sharedVertexStorage = 0;
-
+	a3bufferCreate(vbo_pbo, "vbo/pbo:particles", a3buffer_vertex, PARTICLE_COUNT * sizeof(a3vec3), G_ComputeStartPositions);
 
 	// create vertex formats and drawables
 	// axes: position and color
@@ -430,6 +448,23 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 		a3vertexDrawableCreateIndexed(currentDrawable, vao, vbo_ibo, sceneCommonIndexFormat, morphingModelsData[morphModelIndex]->primType, i, morphingModelsData[morphModelIndex]->numIndices);
 	}
 
+	vao = demoState->vao_particlePosition;
+	a3vertexArrayCreateDescriptor(vao, "vao:particlePos", vbo_ibo, particleFormat, sharedVertexStorage);
+	{
+		a3_VertexAttributeDataDescriptor particleAttribData[1] = {0};
+		a3ui32 morphModelIndex = 0;
+
+		for (i = 0; i < PARTICLE_COUNT; i++)
+		{
+			a3vertexAttribDataCreateDescriptor(particleAttribData, a3attrib_position, G_ComputeStartPositions[i].v);
+		}
+		a3vertexArrayStore(vao, particleAttribData, 1, 0, 0);
+		a3indexBufferStore(vbo_ibo, sceneCommonIndexFormat, particleData[0].indexData, particleData[0].numIndices, 0, &i, 0);
+
+		currentDrawable = demoState->draw_particle_array;
+		a3vertexDrawableCreate(currentDrawable, vao, a3prim_points, 0, PARTICLE_COUNT);
+	}
+
 	// release data when done
 	for (i = 0; i < displayShapesCount; ++i)
 		a3geometryReleaseData(displayShapesData + i);
@@ -440,6 +475,8 @@ void a3demo_loadGeometry(a3_DemoState *demoState)
 	for (i = 0; i < morphingModelsCount; ++i)
 		for (j = 0; j < morphingModelsMaxTargets; ++j)
 			a3geometryReleaseData(morphingModelsData[i] + j);
+	//for (i = 0; i < PARTICLE_COUNT; ++i)
+		//a3geometryReleaseData(particleData[0] + i);
 
 }
 

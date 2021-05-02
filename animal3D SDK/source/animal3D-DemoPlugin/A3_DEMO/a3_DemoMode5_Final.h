@@ -207,7 +207,6 @@ struct a3_DemoMode5_Final
 	a3ui32 finalSegmentIndex;
 
 	// compute data
-	GLuint G_Position_buffer;
 	a3vec3* G_ComputePositions;
 
 	// animation data
