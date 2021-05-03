@@ -156,7 +156,7 @@ void main()
     }
 
     // sample normal
-    vec3 normal = texture(uImage05, texCoord).xyz;
+    vec3 normal = texture(uImage05, texCoord).xyz * 2.0 - 1.0;
     // get view vector
     vec3 viewPos = getPosition(texCoord);
 
